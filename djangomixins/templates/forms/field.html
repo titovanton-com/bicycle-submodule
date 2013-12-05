@@ -1,0 +1,45 @@
+{% block field_title %}
+    <label for="id_{{ field.html_name }}" class="field-title">
+        {% if label %}
+            {{ label }}
+        {% else %}
+            {{ field.label }}
+        {% endif %}
+        {% if field.field.required %}<span class="required"> *</span>{% endif %}
+    </label>
+{% endblock field_title %}
+{% block errors %}
+    {{ field.errors }}
+{% endblock errors %}
+{% if type == "text" %}
+    {% block text %}
+        <input id="id_{{ field.html_name }}"
+            name="{{ field.html_name }}" 
+            type="text" 
+            {% if field.value %}value="{{ field.value }}"{% endif %}
+            {% if field.errors %}class="error"{% endif %}>
+    {% endblock text %}
+{% elif type == "textarea" %}
+    {% block textarea %}
+        <textarea id="id_{{ field.html_name }}"
+            name="{{ field.html_name }}" 
+            {% if field.errors %}class="error"{% endif %}
+            >{% if field.value %}{{ field.value }}{% endif %}</textarea>
+    {% endblock textarea %}
+{% elif type == "radio" %}
+    {% block radio %}
+        {% for radio in field %}
+            <label class="radio">
+                {{ radio.tag }}
+                {{ radio.choice_label }}
+            </label>
+        {% endfor %}
+    {% endblock radio %}
+{% elif type == "password" %}
+    {% block password %}
+        <input id="id_{{ field.html_name }}"
+            name="{{ field.html_name }}" 
+            type="password" 
+            {% if field.errors %}class="error"{% endif %}>
+    {% endblock password %}
+{% endif %}
