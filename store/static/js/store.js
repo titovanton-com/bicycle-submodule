@@ -6,7 +6,7 @@ jQuery(document).ready(function($) {
             dataType: 'HTML',
             success: function(response) {
                 $('[data-store="cart-widget"]').html(response)
-                $('body').trigger('titovantoncore.store.cart-widget-loaded')
+                $('body').trigger('bicycle.store.cart-widget-loaded')
             }
         })
     }
@@ -15,17 +15,17 @@ jQuery(document).ready(function($) {
     // ADD TO CART MODALS
     $('[data-store="add-to-cart"]').click(function(){
         $('[data-store="add-to-cart-modal"]')
-            .data('titovantoncore.store.add-to-cart-form', $(this).parents('form'))
+            .data('bicycle.store.add-to-cart-form', $(this).parents('form'))
             .modal()
         return false
     })
     $('[data-store="add-to-cart-action"]').on('click', function(){
         var $this = $(this),
             $modal = $this.parents('[data-store="add-to-cart-modal"]'),
-            $form = $modal.data('titovantoncore.store.add-to-cart-form'),
+            $form = $modal.data('bicycle.store.add-to-cart-form'),
             data = $form.serialize()
-        if (!$this.data('titovantoncore.store.busy')) {
-            $this.data('titovantoncore.store.busy', true)
+        if (!$this.data('bicycle.store.busy')) {
+            $this.data('bicycle.store.busy', true)
             $this.css({cursor: 'wait'})
             $.ajax({
                 url: '/store/cart/add/',
@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
                         $modal.modal('hide')
                         get_cart_widget()
                     }
-                    $this.data('titovantoncore.store.busy', false)
+                    $this.data('bicycle.store.busy', false)
                     $this.css({cursor: 'pointer'})
                 }
             })

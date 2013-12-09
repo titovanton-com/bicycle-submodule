@@ -3,3 +3,4 @@
 from secret import *
 from default import *
 from sorl import *
+from mainapp import *

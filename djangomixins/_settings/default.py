@@ -2,8 +2,9 @@
 
 import os
 
+from secret import PROJECT_URL
 
-PROJECT_URL = 'sub.localsite.com'
+
 tmp = os.path.abspath(os.path.dirname(__file__))
 APP_ROOT = os.path.split(tmp)[0]
 PROJECT_ROOT = os.path.split(APP_ROOT)[0]
