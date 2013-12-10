@@ -23,6 +23,7 @@ from bicycle.djangomixins.utilites import upload_logo
 
 
 class DynamicMethodsMixin(object):
+
     """This mixin provide passing arguments to class object method, using method name.
 
     For example: if your object *obj* has method with name *do_it* and it takes two ordered 
@@ -76,7 +77,7 @@ class GetUrlMixin(object):
 
     def get_url_by_pk(self):
         return u'/%s/pk/%s/' % (self.__class__.__name__.lower(), self.pk)
-        
+
     def get_url_with_app_by_pk(self):
         return u'/%s/%s/pk/%s/' % (self._meta.app_label, self.__class__.__name__.lower(), self.pk)
 
@@ -181,22 +182,27 @@ class LogoMixin(ImgSeoMixin):
 class PublishedQuerySet(models.query.QuerySet):
 
     def get_published(self, **kwargs):
-        return self.get(published=True, **kwargs)
+        kwargs['published'] = True
+        return self.get(**kwargs)
 
     def get_published_or_404(self, **kwargs):
+        kwargs['published'] = True
         try:
-            return self.get(published=True, **kwargs)
+            return self.get(**kwargs)
         except self.model.DoesNotExist:
             raise Http404('No %s matches the given query.' % self.model._meta.object_name)
 
     def get_unpublished(self, **kwargs):
-        return self.get(published=False, **kwargs)
+        kwargs['published'] = False
+        return self.get(**kwargs)
 
     def published(self, **kwargs):
-        return self.filter(published=True, **kwargs)
+        kwargs['published'] = True
+        return self.filter(**kwargs)
 
     def unpublished(self, **kwargs):
-        return self.filter(published=False, **kwargs)
+        kwargs['published'] = False
+        return self.filter(**kwargs)
 
 
 class PublishedManager(models.Manager):
@@ -225,17 +231,28 @@ class PublishedManager(models.Manager):
         return self.get_query_set().unpublished(**kwargs)
 
 
-class StandartQuerySet(PublishedQuerySet):
+class OrderedQuerySetMixin(object):
 
     def __order(self, qs):
         return qs.annotate(null_order_by=models.Count('order_by'))\
-                 .order_by('-null_order_by', 'order_by', '-created')
+                 .order_by('-null_order_by', 'order_by', '-pk')
+
+    def filter(self, **kwargs):
+        return self.__order(super(OrderedQuerySetMixin, self).filter(**kwargs))
+
+    def all(self, **kwargs):
+        return self.__order(super(OrderedQuerySetMixin, self).all(**kwargs))
+
+
+class StandartQuerySet(OrderedQuerySetMixin, PublishedQuerySet):
 
     def published(self, **kwargs):
-        return self.__order(super(StandartQuerySet, self).published(**kwargs))
+        kwargs['published'] = True
+        return self.filter(**kwargs)
 
     def unpublished(self, **kwargs):
-        return self.__order(super(StandartQuerySet, self).unpublished(**kwargs))
+        kwargs['published'] = False
+        return self.filter(**kwargs)
 
 
 class StandartManager(PublishedManager):
