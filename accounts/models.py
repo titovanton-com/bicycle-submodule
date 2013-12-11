@@ -14,3 +14,4 @@ class UserProfileBase(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name_plural = u'Профили пользователей'

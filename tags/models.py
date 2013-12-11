@@ -19,13 +19,13 @@ class TagBase(AliasRequiredMixin):
     description_admin.allow_tags = True
 
     class Meta:
-        verbose_name_plural = u'Тэги'
+        verbose_name_plural = u'Теги'
         abstract = True
 
 
 class TagsSetBase(AliasRequiredMixin):
     # u should set tags field as in example bellow:
-    # tags = models.ManyToManyField(Tag, verbose_name=u'Набор тэгов')
+    # tags = models.ManyToManyField(Tag, verbose_name=u'Набор тегов')
     tags = None
     # u should set tags field as in example bellow:
     # sys_tag = models.ForeignKey(Tag, blank=True, null=True, related_name='sys_tag_set')
@@ -55,7 +55,7 @@ class TagsSetBase(AliasRequiredMixin):
         super(TagsSetBase, self).save()
 
     class Meta:
-        verbose_name_plural = u'Наборы тэгов'
+        verbose_name_plural = u'Наборы тегов'
         abstract = True
 
 
@@ -69,7 +69,7 @@ class TagProductBase(models.Model):
     # u have to set this field
     product = None
     # u should rewrite tag field, if u use custom Tag model
-    # tag = models.ForeignKey(Tag, verbose_name=u'Тэг')
+    # tag = models.ForeignKey(Tag, verbose_name=u'Тег')
     tag = None
     description = models.TextField(verbose_name=u'Описание', blank=True)
 
@@ -80,7 +80,7 @@ class TagProductBase(models.Model):
 
     def tag_admin(self):
         return self.tag.title
-    tag_admin.short_description = u'Тэг'
+    tag_admin.short_description = u'Тег'
     tag_admin.allow_tags = True
 
     def description_admin(self):
@@ -94,5 +94,5 @@ class TagProductBase(models.Model):
         super(TagProductBase, self).save()
 
     class Meta:
-        verbose_name_plural = u'Продукт-Тэг-Описание'
+        verbose_name_plural = u'Продукт-Тег-Описание'
         abstract = True
