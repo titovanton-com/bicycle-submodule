@@ -22,6 +22,10 @@ from bicycle.djangomixins.utilites import upload_file
 from bicycle.djangomixins.utilites import upload_logo
 
 
+DB_MAX_INT = 2147483647
+DB_MIN_INT = -2147483648
+
+
 class DynamicMethodsMixin(object):
 
     """This mixin provide passing arguments to class object method, using method name.
