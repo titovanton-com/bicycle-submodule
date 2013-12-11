@@ -244,15 +244,6 @@ class OrderedQuerySetMixin(object):
         return self.__order(super(OrderedQuerySetMixin, self).all(**kwargs))
 
 
-class OrderedQuerySetMixin2(object):
-
-    def filter(self, **kwargs):
-        return super(OrderedQuerySetMixin2, self).filter(**kwargs).order_by('order_by', '-pk')
-
-    def all(self, **kwargs):
-        return super(OrderedQuerySetMixin2, self).all(**kwargs).order_by('order_by', '-pk')
-
-
 class StandartQuerySet(OrderedQuerySetMixin, PublishedQuerySet):
 
     def published(self, **kwargs):
