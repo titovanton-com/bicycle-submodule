@@ -126,18 +126,18 @@ class UnicodeTitleMixin(object):
         return u'%s with title: %s' % (self.__class__.__name__, self.title)
 
 
-class AliasRequiredMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
+class AliasMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
     alias = models.CharField(max_length=128, unique=True, verbose_name=u'Название латиницей')
 
     def save(self):
         self.alias = valid_alias(self.alias)
-        super(AliasRequiredMixin, self).save()
+        super(AliasMixin, self).save()
 
     class Meta:
         abstract = True
 
 
-class AliasNotRequiredMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
+class AliasBlankMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
     alias = models.CharField(max_length=128, unique=True, blank=True, null=True,
                              verbose_name=u'Название латиницей')
 
@@ -146,7 +146,7 @@ class AliasNotRequiredMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLink
             self.alias = valid_alias(self.title)
         else:
             self.alias = valid_alias(self.alias)
-        super(AliasNotRequiredMixin, self).save()
+        super(AliasBlankMixin, self).save()
 
     class Meta:
         abstract = True
@@ -162,8 +162,7 @@ class ImgSeoMixin(models.Model):
         abstract = True
 
 
-class LogoMixin(ImgSeoMixin):
-    logo = ImageField(upload_to=upload_logo, verbose_name=u'Лого')
+class MixinLogo(ImgSeoMixin):
 
     def logo_admin(self):
         if self.logo.name:
@@ -178,6 +177,20 @@ class LogoMixin(ImgSeoMixin):
             return u'<a href="%s/"><img src="%s"/></a>' % (self.pk, thumbnail.url)
     logo_admin.short_description = u'Лого'
     logo_admin.allow_tags = True
+
+    class Meta:
+        abstract = True
+
+
+class LogoMixin(MixinLogo):
+    logo = ImageField(upload_to=upload_logo, verbose_name=u'Лого')
+
+    class Meta:
+        abstract = True
+
+
+class LogoBlankMixin(MixinLogo):
+    logo = ImageField(upload_to=upload_logo, blank=True, verbose_name=u'Лого')
 
     class Meta:
         abstract = True
@@ -359,7 +372,7 @@ class ImageBase(ImgSeoMixin):
         abstract = True
 
 
-class CategoryBase(AliasRequiredMixin, LogoMixin, SeoMixin):
+class CategoryBase(AliasMixin, LogoMixin, SeoMixin):
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=u'Предок')
 
     def get_breadcrumbs(self):

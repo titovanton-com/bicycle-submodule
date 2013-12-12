@@ -2,11 +2,11 @@
 
 from django.db import models
 from bicycle.djangomixins.models import StandartUnorderedMixin
-from bicycle.djangomixins.models import AliasRequiredMixin
+from bicycle.djangomixins.models import AliasMixin
 from bicycle.djangomixins.models import SeoMixin
 
 
-class NewsBase(StandartUnorderedMixin, AliasRequiredMixin, SeoMixin):
+class NewsBase(StandartUnorderedMixin, AliasMixin, SeoMixin):
     custom_created = models.DateField(verbose_name=u'Дата')
     preview = models.TextField(verbose_name=u'Текст', blank=True)
     text = models.TextField(verbose_name=u'Текст')

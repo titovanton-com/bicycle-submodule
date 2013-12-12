@@ -1,7 +1,7 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.djangomixins.models import AliasRequiredMixin
+from bicycle.djangomixins.models import AliasMixin
 from bicycle.djangomixins.models import LogoMixin
 from bicycle.djangomixins.models import SeoMixin
 from bicycle.djangomixins.utilites import machine_word
@@ -10,7 +10,7 @@ from bicycle.djangomixins.shortcuts import true_icon
 from bicycle.djangomixins.shortcuts import false_icon
 
 
-class TagBase(AliasRequiredMixin):
+class TagBase(AliasMixin):
     description = models.TextField(verbose_name=u'Описание', blank=True)
 
     def description_admin(self):
@@ -23,7 +23,7 @@ class TagBase(AliasRequiredMixin):
         abstract = True
 
 
-class TagsSetBase(AliasRequiredMixin):
+class TagsSetBase(AliasMixin):
     # u should set tags field as in example bellow:
     # tags = models.ManyToManyField(Tag, verbose_name=u'Набор тегов')
     tags = None

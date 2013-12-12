@@ -10,7 +10,7 @@ from bicycle.djangomixins.models import PhoneField
 from bicycle.djangomixins.models import StandartQuerySet
 from bicycle.djangomixins.models import StandartManager
 from bicycle.djangomixins.models import ChronologyMixin
-from bicycle.djangomixins.models import AliasRequiredMixin
+from bicycle.djangomixins.models import AliasMixin
 from bicycle.djangomixins.models import SeoMixin
 from bicycle.djangomixins.models import ChronologyMixin
 from bicycle.djangomixins.models import TitleMixin
@@ -135,7 +135,7 @@ class ProductMeta(models.base.ModelBase):
         return new
 
 
-class ProductBase(ChronologyMixin, AliasRequiredMixin, SeoMixin):
+class ProductBase(ChronologyMixin, AliasMixin, SeoMixin):
 
     # flags
     PUBLISHED_DEFAULT = True
