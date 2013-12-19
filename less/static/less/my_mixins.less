@@ -159,3 +159,15 @@
     .border-top-radius(@radius);
     .border-bottom-radius(@radius);
 }
+
+.font-face(@name: "MyFontFamily", @file-name: "/static/fonts/filename", 
+           @font-family: @name, @svg-name: @name) {
+    @font-face {
+        font-family: @font-family;
+        src: url("@{file-name}.eot?") format("embedded-opentype"), 
+             url("@{file-name}.woff") format("woff"), 
+             url("@{file-name}.ttf") format("truetype"),
+             url("@{file-name}.otf") format("opentype"),
+             url("@{file-name}.svg#@{name}") format("svg");
+    }
+}
