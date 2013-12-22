@@ -34,7 +34,7 @@ class CartBase(object):
         try:
             self.cart_items = EmptyQuerySet()
         except TypeError:
-            self.cart_item = self.CART_ITEM_MODEL.objects.none()
+            self.cart_items = self.CART_ITEM_MODEL.objects.none()
         assert isinstance(request, HttpRequest)
         if request.user.is_authenticated():
             self.cart_items = self.CART_ITEM_MODEL.objects.filter(user=request.user)

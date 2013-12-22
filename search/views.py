@@ -23,9 +23,8 @@ def update_index(request):
 
 
 class SearchViewBase(ListView):
-
     '''
-    .. sectionauthor:: Василий Шередеко (piphon@gmail.com)
+        .. sectionauthor:: Василий Шередеко (piphon@gmail.com)
     '''
     queryset_class = SearchQuerySet
     empty_queryset_class = EmptySearchQuerySet
