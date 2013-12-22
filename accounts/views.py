@@ -370,10 +370,7 @@ class RestAccountViewMixin(JsonResponseMixin, ToDoView):
                     return self.response('DATA KEY ERROR')
                 try:
                     profile = self.user_profile_model.objects.get(unique_email=unique_email)
-                    print profile.user.username
-                    print input_data['password']
                     user = auth.authenticate(username=profile.user.username, password=password)
-                    print user
                     if user is not None and user.is_active:
                         auth.login(request, user)
                         return self.response('OK')
