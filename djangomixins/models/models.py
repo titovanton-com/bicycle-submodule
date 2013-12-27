@@ -24,6 +24,8 @@ from bicycle.djangomixins.utilites import upload_logo
 
 DB_MAX_INT = 2147483647
 DB_MIN_INT = -2147483648
+DB_MAX_SMALL = 32767
+DB_MIN_SMALL = -32768
 
 
 class DynamicMethodsMixin(object):
@@ -261,7 +263,7 @@ class OrderedQuerySetMixin(object):
         return self.__order(super(OrderedQuerySetMixin, self).all(**kwargs))
 
 
-class StandartQuerySet(OrderedQuerySetMixin, PublishedQuerySet):
+class StandartQuerySet(PublishedQuerySet):
 
     def published(self, **kwargs):
         kwargs['published'] = True
@@ -295,12 +297,12 @@ class ChronologyMixin(models.Model):
 
 class StandartMixin(ChronologyMixin):
     published = models.BooleanField(verbose_name=u'Опубликован', default=True)
-    order_by = models.IntegerField(null=True, blank=True, verbose_name=u'Порядок в списке')
+    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
 
     objects = StandartManager()
 
     class Meta:
-        ordering = ['order_by', '-created']
+        ordering = ['position', '-created']
         abstract = True
 
 
@@ -326,8 +328,7 @@ class SeoMixin(models.Model):
 
 
 class ImageBase(ImgSeoMixin):
-    published = models.BooleanField(verbose_name=u'Опубликован')
-    order_by = models.IntegerField(null=True, blank=True, verbose_name=u'Порядок в списке')
+    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     image = ImageField(upload_to=upload_file, verbose_name=u'Изображение')
 
     objects = PublishedManager()
@@ -367,7 +368,7 @@ class ImageBase(ImgSeoMixin):
         return u'%s with pk: %s' % (self.__class__.__name__, self.pk)
 
     class Meta:
-        ordering = ['order_by', '-pk']
+        ordering = ['position', '-pk']
         verbose_name_plural = u'Изображения'
         abstract = True
 
