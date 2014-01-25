@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.conf import settings
+from bicycle.djangomixins.models import DB_MAX_INT
 from bicycle.djangomixins.models import PhoneField
 from bicycle.djangomixins.models import StandartQuerySet
 from bicycle.djangomixins.models import StandartManager
@@ -148,7 +149,7 @@ class ProductBase(ChronologyMixin, AliasMixin, SeoMixin):
     RETAIL_PRICE_IS_NEEDED = True
     DISCOUNT_IS_NEEDED = True
 
-    order_by = models.IntegerField(null=True, blank=True, verbose_name=u'Порядок в списке')
+    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     description = models.TextField(verbose_name=u'Описание')
     best_seller = models.BooleanField(verbose_name=u'Самое популярное')
     todays_product = models.BooleanField(verbose_name=u'Продукт дня')
