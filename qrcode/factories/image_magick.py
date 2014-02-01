@@ -49,3 +49,6 @@ class MagickImage(BaseImage):
 
     def get_height(self):
         return self._img.height
+
+    def sample(self, width, height):
+        self._img.sample(width, height)

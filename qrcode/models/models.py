@@ -6,9 +6,9 @@ from django.db import models
 from django.conf import settings
 from django.core.files.base import ContentFile
 from sorl.thumbnail import get_thumbnail
+from bicycle.qrcode.factories.image_magick import MagickImage
 import qrcode
 
-from bicycle.qrcode.factories.image_magick import MagickImage
 from fields import QRCodeField
 
 
@@ -34,6 +34,13 @@ class QRCodeMixin(models.Model):
             # bg_img, left, top
         )
 
+    def qr_qrcode(self, stngs):
+        qr = qrcode.QRCode(border=stngs['border'])
+        qr.add_data(self.qr_encode_data())
+        qr.make(fit=stngs['fit'])
+        factory_img = qr.make_image(image_factory=MagickImage)
+        return factory_img
+
     def qr_settings(self):
         """ QRCode settings
 
@@ -45,24 +52,22 @@ class QRCodeMixin(models.Model):
         return self.get_url()
 
     def save(self, *args, **kwargs):
-        stngs = {
-            'border': 0,
-            'fit': True,
-        }
-        stngs.update(self.qr_settings())
-        qr = qrcode.QRCode(border=stngs['border'])
-        qr.add_data(self.qr_encode_data())
-        qr.make(fit=stngs['fit'])
-        img = qr.make_image(image_factory=MagickImage)
-        background = self.qr_background(img)
-        name = 'qr.png'
-        if background:
-            bg_img, left, top = background
-            bg_img.composite(img._img, left, top)
-            blob = bg_img.make_blob()
-        else:
-            blob = img.get_blob()
-        self.qr_code.save(name, ContentFile(blob), save=False)
+        if self.qr_encode_data():
+            stngs = {
+                'border': 0,
+                'fit': True,
+            }
+            stngs.update(self.qr_settings())
+            qrc = self.qr_qrcode(stngs)
+            background = self.qr_background(qrc)
+            name = 'qr.png'
+            if background:
+                bg_img, left, top = background
+                bg_img.composite(qrc._img, left, top)
+                blob = bg_img.make_blob()
+            else:
+                blob = qrc.get_blob()
+            self.qr_code.save(name, ContentFile(blob), save=False)
         super(QRCodeMixin, self).save(*args, **kwargs)
 
     class Meta(object):
