@@ -29,17 +29,17 @@ class QRCodeMixin(models.Model):
     qr_code_admin.short_description = u'QR Код'
     qr_code_admin.allow_tags = True
 
-    def qr_background(self, img):
+    def qr_background(self, qrc):
         return (
             # bg_img, left, top
         )
 
-    def qr_qrcode(self, stngs):
+    def qr_make_qrcode(self, stngs):
         qr = qrcode.QRCode(border=stngs['border'])
         qr.add_data(self.qr_encode_data())
         qr.make(fit=stngs['fit'])
         factory_img = qr.make_image(image_factory=MagickImage)
-        return factory_img
+        return factory_img._img
 
     def qr_settings(self):
         """ QRCode settings
@@ -51,23 +51,28 @@ class QRCodeMixin(models.Model):
     def qr_encode_data(self):
         return self.get_url()
 
-    def save(self, *args, **kwargs):
+    def qr_qrcode(self, *args, **kwargs):
         if self.qr_encode_data():
             stngs = {
                 'border': 0,
                 'fit': True,
             }
             stngs.update(self.qr_settings())
-            qrc = self.qr_qrcode(stngs)
+            qrc = self.qr_make_qrcode(stngs)
             background = self.qr_background(qrc)
             name = 'qr.png'
             if background:
                 bg_img, left, top = background
-                bg_img.composite(qrc._img, left, top)
+                bg_img.composite(qrc, left, top)
+                bg_img.format = 'PNG'
                 blob = bg_img.make_blob()
             else:
-                blob = qrc.get_blob()
+                qrc.format = 'PNG'
+                blob = qrc.make_blob()
             self.qr_code.save(name, ContentFile(blob), save=False)
+
+    def save(self, *args, **kwargs):
+        self.qr_qrcode(*args, **kwargs)
         super(QRCodeMixin, self).save(*args, **kwargs)
 
     class Meta(object):
