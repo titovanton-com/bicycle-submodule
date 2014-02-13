@@ -1,7 +1,7 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.djangomixins.models import AliasMixin
+from bicycle.djangomixins.models import SlugMixin
 from bicycle.djangomixins.models import LogoMixin
 from bicycle.djangomixins.models import SeoMixin
 from bicycle.djangomixins.utilites import machine_word
@@ -10,7 +10,7 @@ from bicycle.djangomixins.shortcuts import true_icon
 from bicycle.djangomixins.shortcuts import false_icon
 
 
-class TagBase(AliasMixin):
+class TagBase(SlugMixin):
     description = models.TextField(verbose_name=u'Описание', blank=True)
 
     def description_admin(self):
@@ -23,7 +23,7 @@ class TagBase(AliasMixin):
         abstract = True
 
 
-class TagsSetBase(AliasMixin):
+class TagsSetBase(SlugMixin):
     # u should set tags field as in example bellow:
     # tags = models.ManyToManyField(Tag, verbose_name=u'Набор тегов')
     tags = None
@@ -40,16 +40,16 @@ class TagsSetBase(AliasMixin):
     def make_sys_title(self):
         return u'Системный тег для <%s>' % self.title
 
-    def make_sys_alias(self):
+    def make_sys_slug(self):
         return machine_word(transliterate(u'system tag ID:%s' % self.pk))
 
     def save(self):
         super(TagsSetBase, self).save()
         if self.sys_tag is None:
             title = self.make_sys_title()
-            alias = self.make_sys_alias()
+            slug = self.make_sys_slug()
             tag_model = self._meta.get_field_by_name('tags')[0].rel.to
-            sys_tag = tag_model(title=title, alias=alias)
+            sys_tag = tag_model(title=title, slug=slug)
             sys_tag.save()
             self.sys_tag = sys_tag
         super(TagsSetBase, self).save()

@@ -17,14 +17,17 @@ from django.conf import settings
 from sorl.thumbnail.fields import ImageField
 from sorl.thumbnail import get_thumbnail
 
-from bicycle.djangomixins.utilites import valid_alias
+from bicycle.djangomixins.utilites import valid_slug
 from bicycle.djangomixins.utilites import upload_file
 from bicycle.djangomixins.utilites import upload_logo
 
 
 DB_MAX_INT = 2147483647
+
 DB_MIN_INT = -2147483648
+
 DB_MAX_SMALL = 32767
+
 DB_MIN_SMALL = -32768
 
 
@@ -57,14 +60,16 @@ class DynamicMethodsMixin(object):
         try:
             spr = super(DynamicMethodsMixin, self).__getattribute__(name)
         except AttributeError:
-            msg = '\'%s\' object has no attribute \'%s\'' % (self.__class__.__name__, name)
+            msg = '\'%s\' object has no attribute \'%s\'' % (
+                self.__class__.__name__, name)
             try:
                 l = name.split('__')
                 method_name, args = l[0], l[1:]
             except IndexError:
                 raise AttributeError(msg)
             else:
-                methods = dict(inspect.getmembers(self.__class__, inspect.ismethod))
+                methods = dict(
+                    inspect.getmembers(self.__class__, inspect.ismethod))
                 if method_name in methods:
                     return self.__MethodWrapper(self, methods[method_name], *args)
                 else:
@@ -76,10 +81,10 @@ class DynamicMethodsMixin(object):
 class GetUrlMixin(object):
 
     def get_url(self):
-        return u'/%s/%s/' % (self.__class__.__name__.lower(), self.alias)
+        return u'/%s/%s/' % (self.__class__.__name__.lower(), self.slug)
 
     def get_url_with_app(self):
-        return u'/%s/%s/%s/' % (self._meta.app_label, self.__class__.__name__.lower(), self.alias)
+        return u'/%s/%s/%s/' % (self._meta.app_label, self.__class__.__name__.lower(), self.slug)
 
     def get_url_by_pk(self):
         return u'/%s/pk/%s/' % (self.__class__.__name__.lower(), self.pk)
@@ -95,20 +100,20 @@ class EditLinkMixin(object):
                                       self.pk)
 
 
-class UnicodeAliasMixin(object):
+class UnicodeSlugMixin(object):
 
     def __unicode__(self):
-        if self.alias:
-            return u'%s' % self.alias
+        if self.slug:
+            return u'%s' % self.slug
         else:
             return u'%s with pk: %s' % (self.__class__.__name__, self.pk)
 
 
-class UnicodeTitleAliasMixin(object):
+class UnicodeTitleSlugMixin(object):
 
     def __unicode__(self):
-        if settings.DEBUG and self.alias or not self.title and self.alias:
-            return u'%s' % self.alias
+        if settings.DEBUG and self.slug or not self.title and self.slug:
+            return u'%s' % self.slug
         elif self.title:
             return u'%s' % self.title
         else:
@@ -128,27 +133,28 @@ class UnicodeTitleMixin(object):
         return u'%s with title: %s' % (self.__class__.__name__, self.title)
 
 
-class AliasMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
-    alias = models.CharField(max_length=128, unique=True, verbose_name=u'Название латиницей')
+class SlugMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
+    slug = models.SlugField(
+        max_length=128, unique=True, verbose_name=u'Краткое названия для URL')
 
     def save(self):
-        self.alias = valid_alias(self.alias)
-        super(AliasMixin, self).save()
+        self.slug = valid_slug(self.slug)
+        super(SlugMixin, self).save()
 
     class Meta:
         abstract = True
 
 
-class AliasBlankMixin(TitleMixin, GetUrlMixin, UnicodeAliasMixin, EditLinkMixin):
-    alias = models.CharField(max_length=128, unique=True, blank=True, null=True,
-                             verbose_name=u'Название латиницей')
+class SlugBlankMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
+    slug = models.SlugField(max_length=128, unique=True, blank=True, null=True,
+                            verbose_name=u'Краткое названия для URL')
 
     def save(self):
-        if not self.alias:
-            self.alias = valid_alias(self.title)
+        if not self.slug:
+            self.slug = valid_slug(self.title)
         else:
-            self.alias = valid_alias(self.alias)
-        super(AliasBlankMixin, self).save()
+            self.slug = valid_slug(self.slug)
+        super(SlugBlankMixin, self).save()
 
     class Meta:
         abstract = True
@@ -209,7 +215,8 @@ class PublishedQuerySet(models.query.QuerySet):
         try:
             return self.get(**kwargs)
         except self.model.DoesNotExist:
-            raise Http404('No %s matches the given query.' % self.model._meta.object_name)
+            raise Http404('No %s matches the given query.' %
+                          self.model._meta.object_name)
 
     def get_unpublished(self, **kwargs):
         kwargs['published'] = False
@@ -238,7 +245,8 @@ class PublishedManager(models.Manager):
         try:
             return qs.get_published(**kwargs)
         except qs.model.DoesNotExist:
-            raise Http404('No %s matches the given query.' % qs.model._meta.object_name)
+            raise Http404('No %s matches the given query.' %
+                          qs.model._meta.object_name)
 
     def get_unpublished(self, **kwargs):
         return self.get_query_set().get_unpublished(**kwargs)
@@ -263,7 +271,7 @@ class OrderedQuerySetMixin(object):
         return self.__order(super(OrderedQuerySetMixin, self).all(**kwargs))
 
 
-class StandartQuerySet(PublishedQuerySet):
+class PublishedQuerySet(PublishedQuerySet):
 
     def published(self, **kwargs):
         kwargs['published'] = True
@@ -274,10 +282,10 @@ class StandartQuerySet(PublishedQuerySet):
         return self.filter(**kwargs)
 
 
-class StandartManager(PublishedManager):
+class PublishedManager(PublishedManager):
 
     def get_query_set(self):
-        return StandartQuerySet(self.model, using=self._db)
+        return PublishedQuerySet(self.model, using=self._db)
 
 
 class ChronologyMixin(models.Model):
@@ -295,23 +303,20 @@ class ChronologyMixin(models.Model):
         abstract = True
 
 
-class StandartMixin(ChronologyMixin):
+class PublishedMixin(models.Model):
     published = models.BooleanField(verbose_name=u'Опубликован', default=True)
-    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
-
-    objects = StandartManager()
-
-    class Meta:
-        ordering = ['position', '-created']
-        abstract = True
-
-
-class StandartUnorderedMixin(ChronologyMixin):
-    published = models.BooleanField(verbose_name=u'Опубликован')
 
     objects = PublishedManager()
 
     class Meta:
+        abstract = True
+
+
+class OrderedMixin(models.Model):
+    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
+
+    class Meta:
+        ordering = ['position', '-pk']
         abstract = True
 
 
@@ -328,7 +333,8 @@ class SeoMixin(models.Model):
 
 
 class ImageBase(ImgSeoMixin):
-    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
+    position = models.PositiveIntegerField(
+        default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     image = ImageField(upload_to=upload_file, verbose_name=u'Изображение')
 
     objects = PublishedManager()
@@ -373,8 +379,9 @@ class ImageBase(ImgSeoMixin):
         abstract = True
 
 
-class CategoryBase(AliasMixin, LogoMixin, SeoMixin):
-    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=u'Предок')
+class CategoryBase(SlugMixin, LogoMixin, SeoMixin):
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, verbose_name=u'Предок')
 
     def get_breadcrumbs(self):
         breadcrumbs = [(self.title,)]

@@ -1,12 +1,12 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.djangomixins.models import StandartUnorderedMixin
-from bicycle.djangomixins.models import AliasMixin
+from bicycle.djangomixins.models import PublishedMixin
+from bicycle.djangomixins.models import SlugMixin
 from bicycle.djangomixins.models import SeoMixin
 
 
-class NewsBase(StandartUnorderedMixin, AliasMixin, SeoMixin):
+class NewsBase(PublishedMixin, SlugMixin, SeoMixin):
     custom_created = models.DateField(verbose_name=u'Дата')
     preview = models.TextField(verbose_name=u'Текст', blank=True)
     text = models.TextField(verbose_name=u'Текст')
@@ -16,5 +16,9 @@ class NewsBase(StandartUnorderedMixin, AliasMixin, SeoMixin):
 
     class Meta:
         abstract = True
-        ordering = ['-created']
+        ordering = ['-custom_created']
         verbose_name_plural = u'Новости'
+
+
+class News(NewsBase):
+    pass

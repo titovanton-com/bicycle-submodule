@@ -134,7 +134,7 @@ def valid_file_name(word):
     return re.sub(patrn, repl, word)
 
 
-def valid_alias(word):
+def valid_slug(word):
     return machine_word(transliterate(word))
 
 

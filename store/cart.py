@@ -115,7 +115,7 @@ class CartBase(object):
             initial = {
                 'order': order,
                 'title': item.product.title,
-                'alias': item.product.alias,
+                'slug': item.product.slug,
                 'retail_price': item.product.retail_price,
                 'discount': item.product.discount,
                 'qty': item.qty,

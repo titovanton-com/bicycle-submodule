@@ -17,21 +17,20 @@ def make_unpublished(modeladmin, request, queryset):
 
 
 class myNewsAdminForm(forms.ModelForm):
+
     class Meta(MetaSeoMixin):
         model = News
 
 
 class NewsAdmin(admin.ModelAdmin):
     form = myNewsAdminForm
-    list_display = ('title', 'alias', 'published', 'created', 'updated',)
-    actions = [make_published, make_unpublished,]
-    readonly_fields = ('created', 'updated')
+    list_display = ('title', 'slug', 'published', 'custom_created',)
+    actions = [make_published, make_unpublished, ]
     search_fields = ('title',)
     fieldsets = (
-        (u'Основное', {'fields': ('title', 'alias', 'published', 'custom_created', 
+        (u'Основное', {'fields': ('title', 'slug', 'published', 'custom_created',
                                   'preview', 'text')}),
         (u'SEO', {'fields': ('html_title', 'html_keywords', 'html_description',)}),
-        (u'Хронология', {'fields': ('created', 'updated',)}),
     )
 
 

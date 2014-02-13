@@ -8,10 +8,10 @@ from django.utils.timezone import now
 from django.conf import settings
 from bicycle.djangomixins.models import DB_MAX_INT
 from bicycle.djangomixins.models import PhoneField
-from bicycle.djangomixins.models import StandartQuerySet
-from bicycle.djangomixins.models import StandartManager
+from bicycle.djangomixins.models import PublishedQuerySet
+from bicycle.djangomixins.models import PublishedManager
 from bicycle.djangomixins.models import ChronologyMixin
-from bicycle.djangomixins.models import AliasMixin
+from bicycle.djangomixins.models import SlugMixin
 from bicycle.djangomixins.models import SeoMixin
 from bicycle.djangomixins.models import ChronologyMixin
 from bicycle.djangomixins.models import TitleMixin
@@ -68,11 +68,11 @@ class NewestQuerySetMixin(object):
 
 
 class ProductQuerySet(TodaysQuerySetMixin, BestsellerQuerySetMixin, OnSaleQuerySetMixin,
-                      NewestQuerySetMixin, StandartQuerySet):
+                      NewestQuerySetMixin, PublishedQuerySet):
     pass
 
 
-class ProductManager(StandartManager):
+class ProductManager(PublishedManager):
 
     def get_query_set(self):
         return ProductQuerySet(self.model, using=self._db)
@@ -136,7 +136,7 @@ class ProductMeta(models.base.ModelBase):
         return new
 
 
-class ProductBase(ChronologyMixin, AliasMixin, SeoMixin):
+class ProductBase(OrderedMixin, ChronologyMixin, SlugMixin, SeoMixin):
 
     # flags
     PUBLISHED_DEFAULT = True
@@ -149,7 +149,6 @@ class ProductBase(ChronologyMixin, AliasMixin, SeoMixin):
     RETAIL_PRICE_IS_NEEDED = True
     DISCOUNT_IS_NEEDED = True
 
-    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     description = models.TextField(verbose_name=u'Описание')
     best_seller = models.BooleanField(verbose_name=u'Самое популярное')
     todays_product = models.BooleanField(verbose_name=u'Продукт дня')
@@ -278,7 +277,7 @@ class OrderBase(ChronologyMixin, BillingMixin):
         assert isinstance(product, ProductBase)
         items = OrderItem.objects.filter(order=order)
         for i in items:
-            if i.alias == product.alias:
+            if i.slug == product.slug:
                 i.qty += qty
                 i.save()
                 return True
@@ -286,7 +285,7 @@ class OrderBase(ChronologyMixin, BillingMixin):
             'title': product.title,
             'qty': qty,
             'sku': product.sku,
-            'alias': product.alias,
+            'slug': product.slug,
             'retail_price': product.retail_price,
             'discount': product.discount,
             'order': order,
@@ -312,7 +311,7 @@ class OrderItemMeta(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):
         new = super(OrderItemMeta, cls).__new__(cls, name, bases, attrs)
         new.add_to_class('order', models.ForeignKey(new.ORDER_MODEL))
-        new.Meta.unique_together = ('order', 'alias',)
+        new.Meta.unique_together = ('order', 'slug',)
         if new.SKU_NEEDED:
             new.add_to_class('sku', models.CharField(max_length=60, verbose_name=u'Артикул'))
         if new.RETAIL_PRICE_NEEDED:
@@ -336,7 +335,7 @@ class OrderItemBase(TitleMixin):
     DISCOUNT_NEEDED = True
 
     qty = models.IntegerField(verbose_name=u'Количество')
-    alias = models.CharField(max_length=120, blank=True, verbose_name=u'Название латиницей')
+    slug = models.SlugField(max_length=120, blank=True, verbose_name=u'Название латиницей')
 
     def price_with_discount(self):
         if self.discount:
@@ -350,7 +349,7 @@ class OrderItemBase(TitleMixin):
 
     def get_url(self):
         try:
-            product = PRODUCT_MODEL.objects.get_published(alias=self.alias)
+            product = PRODUCT_MODEL.objects.get_published(slug=self.slug)
             return product.get_url()
         except PRODUCT_MODEL.DoesNotExist:
             return False
