@@ -8,6 +8,6 @@ from views import NewsDetailView
 
 
 urlpatterns = patterns('',
-    url(r'^$', NewsListView.as_view()),
     url(r'^(?P<slug>[^/]*)/$', NewsDetailView.as_view()),
+    url(r'^$', NewsListView.as_view()),
 )

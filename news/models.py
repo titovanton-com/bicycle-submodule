@@ -8,7 +8,7 @@ from bicycle.djangomixins.models import SeoMixin
 
 class NewsBase(PublishedMixin, SlugMixin, SeoMixin):
     custom_created = models.DateField(verbose_name=u'Дата')
-    preview = models.TextField(verbose_name=u'Текст', blank=True)
+    preview = models.TextField(verbose_name=u'Анонс', blank=True)
     text = models.TextField(verbose_name=u'Текст')
 
     def get_breadcrumbs(self):

@@ -36,8 +36,10 @@ class NewsDetailViewBase(DetailView):
 
 
 class NewsListView(NewsListViewBase):
-    template_name =  'news/list.html'
+    model = News
+    template_name = 'news/object_list.html'
 
 
 class NewsDetailView(NewsDetailViewBase):
-    template_name =  'news/detail.html'
+    model = News
+    template_name = 'news/object.html'
