@@ -20,4 +20,4 @@ class CarouselAdmin(AdminImageMixin, admin.ModelAdmin):
 
 
 admin.site.register(Carousel, CarouselAdmin)
-admin.site.register(CarouselImage)
+# admin.site.register(CarouselImage)

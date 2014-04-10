@@ -22,3 +22,7 @@ class Carousel(SlugMixin):
 class CarouselImage(ImageBase):
     carousel = models.ForeignKey(Carousel, verbose_name=u'Карусель')
     link = models.URLField(blank=True, null=True, verbose_name=u'Ссылка')
+
+    class Meta:
+        ordering = ['position', '-pk']
+        verbose_name_plural = u'Изображения для Карусели'
