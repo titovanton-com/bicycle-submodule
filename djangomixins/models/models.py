@@ -170,19 +170,24 @@ class ImgSeoMixin(models.Model):
         abstract = True
 
 
-class MixinLogo(ImgSeoMixin):
-
-    def logo_admin(self):
-        if self.logo.name:
-            image_path = os.path.join(settings.MEDIA_ROOT, str(self.logo))
-        else:
-            image_path = os.path.join(settings.MEDIA_ROOT, 'noimage.png')
+def thumbnail_admin(self, img, pk):
+    if img.name:
+        image_path = os.path.join(settings.MEDIA_ROOT, str(img))
         try:
             thumbnail = get_thumbnail(image_path, '100x100', quality=20)
         except IOError:
-            return u'Лого нет'
+            url = u'http://dummyimage.com/100x100/e0e0e0/de0000.jpg&text=IOError'
         else:
-            return u'<a href="%s/"><img src="%s"/></a>' % (self.pk, thumbnail.url)
+            url = thumbnail.url
+    else:
+        url = u'http://dummyimage.com/100x100/e0e0e0/545454.jpg&text=dummy'
+    return u'<a href="%s/"><img src="%s"/></a>' % (pk, url)
+
+
+class MixinLogo(ImgSeoMixin):
+
+    def logo_admin(self):
+        return thumbnail_admin(self, self.logo, self.pk)
     logo_admin.short_description = u'Лого'
     logo_admin.allow_tags = True
 
@@ -340,16 +345,7 @@ class ImageBase(ImgSeoMixin):
     objects = PublishedManager()
 
     def thumbnail_admin(self):
-        if self.image.name:
-            image_path = os.path.join(settings.MEDIA_ROOT, str(self.image))
-        else:
-            image_path = os.path.join(settings.MEDIA_ROOT, 'noimage.png')
-        try:
-            thumbnail = get_thumbnail(image_path, '100x100', quality=20)
-        except IOError:
-            return u'Изображения нет'
-        else:
-            return u'<a href="%s/"><img src="%s"/></a>' % (self.pk, thumbnail.url)
+        return thumbnail_admin(self, self.image, self.pk)
     thumbnail_admin.short_description = u'Thumbnail'
     thumbnail_admin.allow_tags = True
 
