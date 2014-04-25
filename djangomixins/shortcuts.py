@@ -26,6 +26,7 @@ def _send_email_job(subject, from_email, to, tpl, context):
     content = t.render(c)
     msg = EmailMultiAlternatives(subject, content, from_email, json.loads(to))
     msg.content_subtype = "html"
+    # needs to be more stable: return 1 as success, but no errors handling
     msg.send()
 
 
@@ -66,3 +67,4 @@ def false_icon():
 
 def true_icon():
     return u'<img alt="True" src="%sadmin/img/icon-yes.gif">' % settings.STATIC_URL
+    

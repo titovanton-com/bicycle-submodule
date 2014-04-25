@@ -13,3 +13,8 @@ def account_urlpatterns(AccountView):
     return patterns('',
         url(r'^(?P<todo>\w+?)/$', AccountView.as_view()),
     )
+
+def account_invitations_urlpatterns(InvitationsView):
+    return patterns('',
+        url(r'^invitations/(?P<todo>\w+?)/$', InvitationsView.as_view()),
+    )

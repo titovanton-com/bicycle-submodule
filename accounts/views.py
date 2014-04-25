@@ -2,6 +2,7 @@
 
 import json
 
+from django.conf import settings
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import auth
@@ -48,12 +49,12 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
     profile_change_destination = '/accounts/user-room/#profile-nofollow'
 
     # forms
-    _forms = {} # forms instances
+    _forms = {}  # forms instances
     login_form = LoginForm
     user_form = UserForm
     profile_form = None
     password_and_confirm_form = PasswordAndConfirmForm
-    captcha_form = None # get_captcha_form()
+    captcha_form = None  # get_captcha_form()
     email_form = EmailForm
     change_password_form = ChangePasswordForm
     password_form = PasswordForm
@@ -142,7 +143,8 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
         pass
 
     def hook_register_failed_message(self, request, error):
-        request.alert_messages += [Message('error', self.register_integrity_error % error)]
+        request.alert_messages += [
+            Message('error', self.register_integrity_error % error)]
         request.register_form_error = True
 
     def hook_register_failed(self, request):
@@ -160,12 +162,14 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
         success = request.path
         if success_form.is_valid():
             success = success_form.cleaned_data['success']
-        self._forms['login_form'] = self.login_form(initial={'success': success})
+        self._forms['login_form'] = self.login_form(
+            initial={'success': success})
 
     def _get_register_forms(self, request):
         self._forms['user_form'] = self.user_form()
         self._forms['profile_form'] = self.profile_form()
-        self._forms['password_and_confirm_form'] = self.password_and_confirm_form()
+        self._forms[
+            'password_and_confirm_form'] = self.password_and_confirm_form()
         self._forms['captcha_form'] = self.captcha_form()
 
     def _get_password_recovery_form(self, request):
@@ -178,8 +182,10 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
             unique_email = form.cleaned_data['unique_email']
             password = form.cleaned_data['password']
             try:
-                profile = self.user_profile_model.objects.get(unique_email=unique_email)
-                user = auth.authenticate(username=profile.user.username, password=password)
+                profile = self.user_profile_model.objects.get(
+                    unique_email=unique_email)
+                user = auth.authenticate(
+                    username=profile.user.username, password=password)
                 if user is not None and user.is_active:
                     auth.login(request, user)
                     self.hook_login_success_message(user)
@@ -199,7 +205,8 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
     def _post_register_form(self, request, *args, **kwargs):
         self._forms['user_form'] = self.user_form(request.POST)
         self._forms['profile_form'] = self.profile_form(request.POST)
-        self._forms['password_and_confirm_form'] = self.password_and_confirm_form(request.POST)
+        self._forms['password_and_confirm_form'] = self.password_and_confirm_form(
+            request.POST)
         self._forms['captcha_form'] = self.captcha_form(request.POST)
         if self._forms['user_form'].is_valid() and self._forms['profile_form'].is_valid() and \
            self._forms['password_and_confirm_form'].is_valid() and self._forms['captcha_form'].is_valid():
@@ -210,15 +217,19 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
                     if User.objects.get(username=username):
                         raise UserAlreadyExists(u'Логин')
                 else:
-                    username = machine_word(self._forms['profile_form'].cleaned_data['unique_email'])
+                    username = machine_word(
+                        self._forms['profile_form'].cleaned_data['unique_email'])
                     if self.user_profile_model.objects.get(unique_email=unique_email):
                         raise UserAlreadyExists(u'Email')
                 user = User.objects.create_user(
                     username=username,
-                    email=self._forms['profile_form'].cleaned_data['unique_email'],
+                    email=self._forms[
+                        'profile_form'].cleaned_data['unique_email'],
                     password=self._forms['password_and_confirm_form'].cleaned_data['password'])
-                user.first_name = self._forms['user_form'].cleaned_data['first_name']
-                user.last_name = self._forms['user_form'].cleaned_data['last_name']
+                user.first_name = self._forms[
+                    'user_form'].cleaned_data['first_name']
+                user.last_name = self._forms[
+                    'user_form'].cleaned_data['last_name']
                 user.save()
                 profile = self._forms['profile_form'].save(commit=False)
                 profile.user = user
@@ -262,7 +273,8 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
             send_email_rq(subject, from_email, to, tpl, context)
             FutureMessage.objects.create(session_key=session_start(request),
                                          mtype='success',
-                                         title=self.password_recovery_success[1],
+                                         title=self.password_recovery_success[
+                                             1],
                                          text=self.password_recovery_success[0])
             return request.path
         else:
@@ -292,7 +304,8 @@ class UserRoomViewBase(RenderWithContextMixin, ToDoView):
                                              text=self.password_saved_message)
                 return redirect(self.password_change_destination)
             else:
-                request.alert_messages += [Message('error', self.password_confirm_faild_message)]
+                request.alert_messages += [
+                    Message('error', self.password_confirm_faild_message)]
                 form.error = True
                 return form
         else:
@@ -325,7 +338,8 @@ class UserRoomViewBase(RenderWithContextMixin, ToDoView):
             if not password_form.is_valid() or\
                not request.user.check_password(password_form.cleaned_data['password']):
                 forms['error'] = True
-                request.alert_messages += [Message('error', self.password_failed_message)]
+                request.alert_messages += [
+                    Message('error', self.password_failed_message)]
                 return forms
             if user_form.is_valid() and profile_form.is_valid():
                 try:
@@ -335,9 +349,12 @@ class UserRoomViewBase(RenderWithContextMixin, ToDoView):
                         unique_email=profile_form.cleaned_data['unique_email']):
                         raise UserAlreadyExists(u'Email')
                     profile_form.save()
-                    request.user.first_name = user_form.cleaned_data['first_name']
-                    request.user.last_name = user_form.cleaned_data['last_name']
-                    request.user.email = profile_form.cleaned_data['unique_email']
+                    request.user.first_name = user_form.cleaned_data[
+                        'first_name']
+                    request.user.last_name = user_form.cleaned_data[
+                        'last_name']
+                    request.user.email = profile_form.cleaned_data[
+                        'unique_email']
                     request.user.save()
                     FutureMessage.objects.create(user=request.user,
                                                  mtype='success',
@@ -353,7 +370,7 @@ class UserRoomViewBase(RenderWithContextMixin, ToDoView):
 
 class RestAccountViewMixin(JsonResponseMixin, ToDoView):
     user_profile_model = None
-    
+
     def post_login(self, request,   *args, **kwargs):
         if not request.user.is_authenticated():
             form = RestForm(request.POST)
@@ -369,8 +386,10 @@ class RestAccountViewMixin(JsonResponseMixin, ToDoView):
                 except KeyError:
                     return self.response('DATA KEY ERROR')
                 try:
-                    profile = self.user_profile_model.objects.get(unique_email=unique_email)
-                    user = auth.authenticate(username=profile.user.username, password=password)
+                    profile = self.user_profile_model.objects.get(
+                        unique_email=unique_email)
+                    user = auth.authenticate(
+                        username=profile.user.username, password=password)
                     if user is not None and user.is_active:
                         auth.login(request, user)
                         return self.response('OK')
@@ -388,3 +407,19 @@ class RestAccountViewMixin(JsonResponseMixin, ToDoView):
             return self.response('OK')
         else:
             return self.response('U R !LOGGED IN')
+
+
+class InvitationsViewBase(RenderWithContextMixin, ToDoView):
+    template = 'accounts/invitation_page.html'
+    model = None
+
+    def _send_and_response(self, request, filtr):
+        queryset = self.model.objects.filter(status=filtr)
+        for invitation in queryset:
+            invitation.send_email(request)
+        context = self.get_context_data()
+        return self.response(request, self.template, context)
+
+    def get_send_new(self, request, *args, **kwargs):
+        filtr = self.model.STATUS_CHOICES[0][0]
+        return self._send_and_response(request, filtr)
