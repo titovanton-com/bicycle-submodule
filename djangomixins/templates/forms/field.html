@@ -1,5 +1,5 @@
 {% block field_title %}
-    <label for="id_{{ field.html_name }}" class="field-title">
+    <label for="id_{{ field.html_name }}_{{ form_id }}" class="field-title">
         {% if label %}
             {{ label }}
         {% else %}
@@ -13,7 +13,7 @@
 {% endblock errors %}
 {% if type == "text" %}
     {% block text %}
-        <input id="id_{{ field.html_name }}"
+        <input id="id_{{ field.html_name }}_{{ form_id }}"
             name="{{ field.html_name }}" 
             type="text" 
             {% if field.value %}value="{{ field.value }}"{% endif %}
@@ -21,7 +21,7 @@
     {% endblock text %}
 {% elif type == "textarea" %}
     {% block textarea %}
-        <textarea id="id_{{ field.html_name }}"
+        <textarea id="id_{{ field.html_name }}_{{ form_id }}"
             name="{{ field.html_name }}" 
             {% if field.errors %}class="error"{% endif %}
             >{% if field.value %}{{ field.value }}{% endif %}</textarea>
@@ -37,7 +37,7 @@
     {% endblock radio %}
 {% elif type == "password" %}
     {% block password %}
-        <input id="id_{{ field.html_name }}"
+        <input id="id_{{ field.html_name }}_{{ form_id }}"
             name="{{ field.html_name }}" 
             type="password" 
             {% if field.errors %}class="error"{% endif %}>

@@ -150,3 +150,13 @@ def upload_logo(instance, filename):
 
 def md5_random_string():
     return hashlib.md5(now().isoformat()).hexdigest()
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+    
