@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.db import models
 from django.db.models.query import EmptyQuerySet
-from bicycle.djangomixins.shortcuts import session_start
+from bicycle.core.shortcuts import session_start
 
 
 def default_return(func):

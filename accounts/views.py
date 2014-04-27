@@ -7,14 +7,14 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import auth
 from django.contrib.auth.models import User
-from bicycle.djangomixins.views import ToDoView
-from bicycle.djangomixins.views import RenderWithContextMixin
-# from bicycle.djangomixins.forms import get_captcha_form
-from bicycle.djangomixins.utilites import machine_word
-from bicycle.djangomixins.utilites import transliterate
-from bicycle.djangomixins.utilites import md5_random_string
-from bicycle.djangomixins.shortcuts import send_email_rq
-from bicycle.djangomixins.shortcuts import session_start
+from bicycle.core.views import ToDoView
+from bicycle.core.views import RenderWithContextMixin
+# from bicycle.core.forms import get_captcha_form
+from bicycle.core.utilites import machine_word
+from bicycle.core.utilites import transliterate
+from bicycle.core.utilites import md5_random_string
+from bicycle.core.shortcuts import send_email_rq
+from bicycle.core.shortcuts import session_start
 from bicycle.futuremessage.message import Message
 from bicycle.futuremessage.models import FutureMessage
 from bicycle.rest.forms import RestForm

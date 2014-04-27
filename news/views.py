@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-# from bicycle.djangomixins.shortcuts import get_page
+# from bicycle.core.shortcuts import get_page
 
 from models import News
 from forms import GetPage

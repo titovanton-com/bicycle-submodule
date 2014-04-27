@@ -50,7 +50,7 @@ def send_email_rq(subject, from_email, to, tpl='email.html', context={}):
 
     import django_rq
 
-    func = 'bicycle.djangomixins.shortcuts._send_email_job'
+    func = 'bicycle.core.shortcuts._send_email_job'
     django_rq.enqueue(func, subject, from_email, json.dumps(to), tpl, json.dumps(context))
 
 

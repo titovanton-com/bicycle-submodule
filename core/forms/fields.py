@@ -14,4 +14,4 @@ class PhoneField(CharField):
         return super(PhoneField, self).to_python(value)
 
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^bicycle\.djangomixins\.models\.fields\.PhoneField"])
+add_introspection_rules([], ["^bicycle\.core\.models\.fields\.PhoneField"])

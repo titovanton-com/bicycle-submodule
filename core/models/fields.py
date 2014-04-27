@@ -4,7 +4,7 @@ import re
 
 from django.db.models import CharField
 
-from bicycle.djangomixins import forms
+from bicycle.core import forms
 
 
 class PhoneField(CharField):

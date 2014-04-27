@@ -3,8 +3,8 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
-from bicycle.djangomixins.utilites import md5_random_string
-from bicycle.djangomixins.shortcuts import send_email_rq
+from bicycle.core.utilites import md5_random_string
+from bicycle.core.shortcuts import send_email_rq
 
 
 class UserProfileBase(models.Model):

@@ -1,6 +1,6 @@
 # coding: UTF-8
 """
-:mod:`bicycle.djangomixins.models.models` -- main models mixins collection
+:mod:`bicycle.core.models.models` -- main models mixins collection
 ===================================
 
 .. moduleauthor:: Titov Anton (mail@titovanton.com)
@@ -17,9 +17,9 @@ from django.conf import settings
 from sorl.thumbnail.fields import ImageField
 from sorl.thumbnail import get_thumbnail
 
-from bicycle.djangomixins.utilites import valid_slug
-from bicycle.djangomixins.utilites import upload_file
-from bicycle.djangomixins.utilites import upload_logo
+from bicycle.core.utilites import valid_slug
+from bicycle.core.utilites import upload_file
+from bicycle.core.utilites import upload_logo
 
 
 DB_MAX_INT = 2147483647

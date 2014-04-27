@@ -1,9 +1,9 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.djangomixins.models import PublishedMixin
-from bicycle.djangomixins.models import SlugMixin
-from bicycle.djangomixins.models import SeoMixin
+from bicycle.core.models import PublishedMixin
+from bicycle.core.models import SlugMixin
+from bicycle.core.models import SeoMixin
 
 
 class NewsBase(PublishedMixin, SlugMixin, SeoMixin):

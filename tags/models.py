@@ -1,13 +1,13 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.djangomixins.models import SlugMixin
-from bicycle.djangomixins.models import LogoMixin
-from bicycle.djangomixins.models import SeoMixin
-from bicycle.djangomixins.utilites import machine_word
-from bicycle.djangomixins.utilites import transliterate
-from bicycle.djangomixins.shortcuts import true_icon
-from bicycle.djangomixins.shortcuts import false_icon
+from bicycle.core.models import SlugMixin
+from bicycle.core.models import LogoMixin
+from bicycle.core.models import SeoMixin
+from bicycle.core.utilites import machine_word
+from bicycle.core.utilites import transliterate
+from bicycle.core.shortcuts import true_icon
+from bicycle.core.shortcuts import false_icon
 
 
 class TagBase(SlugMixin):

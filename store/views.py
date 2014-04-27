@@ -5,8 +5,8 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.core.context_processors import csrf
 from bicycle.futuremessage.models import FutureMessage
-from bicycle.djangomixins.views import ToDoView
-from bicycle.djangomixins.views import RenderWithContextMixin
+from bicycle.core.views import ToDoView
+from bicycle.core.views import RenderWithContextMixin
 from bicycle.rest.views import JsonResponseMixin
 
 

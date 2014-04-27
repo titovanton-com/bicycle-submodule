@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from bicycle.djangomixins.models import SlugMixin
-from bicycle.djangomixins.models import ImageBase
+from bicycle.core.models import SlugMixin
+from bicycle.core.models import ImageBase
 
 
 class Carousel(SlugMixin):

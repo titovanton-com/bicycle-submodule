@@ -6,16 +6,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.conf import settings
-from bicycle.djangomixins.models import DB_MAX_INT
-from bicycle.djangomixins.models import PhoneField
-from bicycle.djangomixins.models import PublishedQuerySet
-from bicycle.djangomixins.models import PublishedManager
-from bicycle.djangomixins.models import ChronologyMixin
-from bicycle.djangomixins.models import SlugMixin
-from bicycle.djangomixins.models import SeoMixin
-from bicycle.djangomixins.models import ChronologyMixin
-from bicycle.djangomixins.models import TitleMixin
-from bicycle.djangomixins.utilites import md5_random_string
+from bicycle.core.models import DB_MAX_INT
+from bicycle.core.models import PhoneField
+from bicycle.core.models import PublishedQuerySet
+from bicycle.core.models import PublishedManager
+from bicycle.core.models import ChronologyMixin
+from bicycle.core.models import SlugMixin
+from bicycle.core.models import SeoMixin
+from bicycle.core.models import ChronologyMixin
+from bicycle.core.models import TitleMixin
+from bicycle.core.utilites import md5_random_string
 
 
 class BillingMixin(models.Model):

@@ -21,7 +21,7 @@ def get_captcha_form():
                                           'in your project settings')
         try:
             from captcha.fields import ReCaptchaField
-            from bicycle.djangomixins.messages import RECAPTCHA_ERRORS
+            from bicycle.core.messages import RECAPTCHA_ERRORS
         except ImportError:
             raise CaptchaFormNotAvailable(
                 'Unable to import the ReCaptchaField or RECAPTCHA_ERRORS')

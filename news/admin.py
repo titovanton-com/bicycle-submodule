@@ -3,7 +3,7 @@
 
 from django.contrib import admin
 from django import forms
-from bicycle.djangomixins.admin import MetaSeoMixin
+from bicycle.core.admin import MetaSeoMixin
 
 from models import News
 

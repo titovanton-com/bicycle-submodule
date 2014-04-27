@@ -2,8 +2,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from bicycle.djangomixins.models import PublishedMixin
-from bicycle.djangomixins.models import ChronologyMixin
+from bicycle.core.models import PublishedMixin
+from bicycle.core.models import ChronologyMixin
 
 
 class FeedbackBase(PublishedMixin, ChronologyMixin):
