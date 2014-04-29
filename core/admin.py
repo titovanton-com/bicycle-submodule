@@ -12,12 +12,16 @@ class MetaSeoMixin(object):
 
 
 def make_published(modeladmin, request, queryset):
-    queryset.update(published=True)
+    rows_updated = queryset.update(published=True)
+    modeladmin.message_user(request, 
+        "%s объект(ов) успешно опубликован(ы)." % rows_updated)
 make_published.short_description = u'Опубликовать'
 
 
 def make_unpublished(modeladmin, request, queryset):
-    queryset.update(published=False)
+    rows_updated = queryset.update(published=False)
+    modeladmin.message_user(request, 
+        "%s объект(ов) успешно снят(ы) с публикации." % rows_updated)
 make_unpublished.short_description = u'Убрать флаг публикации'
 
 
@@ -35,3 +39,7 @@ class MediaTranslationMeta(type):
                        settings.STATIC_URL,),
         }
         return new
+
+
+admin.site.add_action(make_published)
+admin.site.add_action(make_unpublished)
