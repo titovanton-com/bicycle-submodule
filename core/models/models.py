@@ -303,6 +303,13 @@ class ChronologyMixin(models.Model):
         self.updated = now()
         super(ChronologyMixin, self).save()
 
+    def full_clean(self, exclude=None, validate_unique=True):
+        if exclude is not None:
+            exclude += ['created', 'updated']
+        else:
+            exclude = ['created', 'updated']
+        super(ChronologyMixin, self).full_clean(exclude, validate_unique)
+
     class Meta:
         ordering = ['-created', ]
         abstract = True
