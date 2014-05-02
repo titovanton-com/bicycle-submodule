@@ -7,5 +7,6 @@ from views import FeedbackCreateView
 
 
 urlpatterns = patterns('',
+    url(r'^thanks/$', FeedbackCreateView.as_view(thanks=True)),
     url(r'^$', FeedbackCreateView.as_view()),
 )

@@ -6,10 +6,10 @@ from bicycle.core.models import PublishedMixin
 from bicycle.core.models import ChronologyMixin
 
 
-class FeedbackBase(PublishedMixin, ChronologyMixin):
+class FeedbackBase(ChronologyMixin):
     user = models.ForeignKey(User, blank=True, null=True, verbose_name=u'Пользователь')
     name = models.CharField(max_length=120, verbose_name=u'Имя')
-    email = models.EmailField(verbose_name=u'Почтовый адрес')
+    contacts = models.TextField(verbose_name=u'Контакты')
     text = models.TextField(verbose_name=u'Сообщение')
 
     class Meta:

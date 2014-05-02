@@ -7,7 +7,7 @@ from models import Feedback
 
 class FeedbackAdmin(admin.ModelAdmin):
     model = Feedback
-    list_display = ('name', 'email', 'user', 'created', 'updated')
+    list_display = ('name', 'user', 'contacts', 'created', 'updated')
     readonly_fields = ('created', 'updated')
 
 
