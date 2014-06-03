@@ -137,7 +137,7 @@ class SlugMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
     slug = models.SlugField(
         max_length=128, unique=True, verbose_name=u'Краткое названия для URL')
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.slug = valid_slug(self.slug)
         super(SlugMixin, self).save()
 
@@ -149,7 +149,7 @@ class SlugBlankMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
     slug = models.SlugField(max_length=128, unique=True, blank=True, null=True,
                             verbose_name=u'Краткое названия для URL')
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = valid_slug(self.title)
         else:
@@ -297,7 +297,7 @@ class ChronologyMixin(models.Model):
     created = models.DateTimeField(verbose_name=u'Создан')
     updated = models.DateTimeField(verbose_name=u'Обновлен')
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.id:
             self.created = now()
         self.updated = now()
