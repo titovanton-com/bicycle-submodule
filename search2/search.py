@@ -95,18 +95,18 @@ class SearchSchemaBase(object):
 
     @classmethod
     def create(cls, schemas):
-        indeces = {}
+        indices = {}
         for obj in schemas:
             index_name = obj.get_index()
-            if index_name not in indeces:
+            if index_name not in indices:
                 cls.index_exists(index_name)
-                indeces[index_name] = getattr(settings, 'INDEX_PATTERN', INDEX_PATTERN).copy()
+                indices[index_name] = getattr(settings, 'INDEX_PATTERN', INDEX_PATTERN).copy()
             from pprint import pprint
             pprint (obj.get_mappings())
-            indeces[index_name]['mappings'].update(obj.get_mappings())
-        for index_name in indeces:
+            indices[index_name]['mappings'].update(obj.get_mappings())
+        for index_name in indices:
             url = 'http://%s/%s/?pretty' % (cls.get_host(), index_name)
-            response = requests.put(url, data=json.dumps(indeces[index_name]))
+            response = requests.put(url, data=json.dumps(indices[index_name]))
             r = response.json()
             acknowledged = r.get('acknowledged', False)
             if acknowledged:
@@ -152,7 +152,7 @@ class SearchSchemaBase(object):
 
 
 class QueryStringMixin(object):
-    # TODO: provide query_sting with several types and indeces
+    # TODO: provide query_sting with several types and indices
     @classmethod
     def get_query_pattern(cls, query):
         return {
