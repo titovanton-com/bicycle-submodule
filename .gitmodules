@@ -1,0 +1,3 @@
+[submodule "search2"]
+	path = search2
+	url = git@github.com:titovanton/bicycle-search.git
