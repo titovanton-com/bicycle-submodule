@@ -92,6 +92,9 @@ class GetUrlMixin(object):
     def get_url_with_app_by_pk(self):
         return u'/%s/%s/pk/%s/' % (self._meta.app_label, self.__class__.__name__.lower(), self.pk)
 
+    def get_absolute_url(self):
+        return self.get_url()
+
 
 class EditLinkMixin(object):
 

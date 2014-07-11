@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class InvitationAdminMixin(object):
     list_display = ('unique_email', 'status')
     fields = ('unique_email',)

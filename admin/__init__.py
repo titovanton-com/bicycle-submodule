@@ -1,8 +1,17 @@
-# coding: UTF-8
+# -*- coding: utf-8 -*-
 
-from django.contrib import admin
 from django.conf import settings
+from django.contrib import admin
+from django.http import HttpResponseRedirect
 
+
+def false_icon():
+    return u'<img alt="False" src="%sadmin/img/icon-no.gif">' % settings.STATIC_URL
+
+
+def true_icon():
+    return u'<img alt="True" src="%sadmin/img/icon-yes.gif">' % settings.STATIC_URL
+    
 
 class MetaSeoMixin(object):
     widgets = {
@@ -24,6 +33,9 @@ def make_unpublished(modeladmin, request, queryset):
         "%s объект(ов) успешно снят(ы) с публикации." % rows_updated)
 make_unpublished.short_description = u'Убрать флаг публикации'
 
+admin.site.add_action(make_published)
+admin.site.add_action(make_unpublished)
+
 
 class MediaTranslationMeta(type):
 
@@ -41,5 +53,9 @@ class MediaTranslationMeta(type):
         return new
 
 
-admin.site.add_action(make_published)
-admin.site.add_action(make_unpublished)
+class RedirectOnSaveMixin(object):
+    def response_add(self, request, obj, post_url_continue=None):
+        return HttpResponseRedirect(obj.get_url())
+
+    def response_add(self, request, obj, post_url_continue=None):
+        return HttpResponseRedirect(obj.get_url())

@@ -59,12 +59,3 @@ def session_start(request):
         request.session['session start'] = True
         request.session.save()
     return request.session.session_key
-
-
-def false_icon():
-    return u'<img alt="False" src="%sadmin/img/icon-no.gif">' % settings.STATIC_URL
-
-
-def true_icon():
-    return u'<img alt="True" src="%sadmin/img/icon-yes.gif">' % settings.STATIC_URL
-    
