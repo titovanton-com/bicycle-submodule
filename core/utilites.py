@@ -127,11 +127,16 @@ def transliterate(string):
     return string
 
 
+def md5_random_string():
+    return hashlib.md5(now().isoformat()).hexdigest()
+
+
 def valid_file_name(word):
     word = transliterate(word).lower().strip()
     patrn = r'[^a-zA-Z0-9_.()-]'
     repl = '-'
-    return re.sub(patrn, repl, word)
+    fingerprint = md5_random_string()
+    return u'%s-%s' % (fingerprint, re.sub(patrn, repl, word))
 
 
 def valid_slug(word):
@@ -146,10 +151,6 @@ def upload_file(instance, filename):
 def upload_logo(instance, filename):
     return os.path.join(u'%s_logo' % instance.__class__.__name__.lower(),
                         valid_file_name(filename))
-
-
-def md5_random_string():
-    return hashlib.md5(now().isoformat()).hexdigest()
 
 
 def get_client_ip(request):
