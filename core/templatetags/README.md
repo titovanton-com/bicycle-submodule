@@ -8,8 +8,12 @@ Return value of dict if it does exists, else return empty string
 
 Usage:
 
-    {{ dict|get:"key" }}
+    {% load dict %}
+
+    {{ d|get:"key" }}
 
 With default value:
 
-    {{ dict|get:"key"|default:"value" }}
+    {% load dict %}
+
+    {{ d|get:"key"|default:"value" }}

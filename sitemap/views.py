@@ -6,7 +6,12 @@ from django.views.generic import TemplateView
 
 
 class SitemapView(TemplateView):
-    template_name = ['sitemap.xml', 'sitemap/base.html']
+    template_name = ['sitemap.xml', 'sitemap/base.xml']
+    content_type = 'application/xhtml+xml'
+
+    def get_template_names(self):
+        # I have to reload this method, becouse of bug/error in TemplateView code
+        return self.template_name
 
     def get_settings(self):
         return settings.SITEMAP
@@ -23,8 +28,9 @@ class SitemapView(TemplateView):
             model = get_model(*tmp)
             obj = {
                 'queryset': self.get_queryset(model),
-                'priority': sitemap[key]['priority'],
-                'ids': sitemap[key]['ids']
+                'priority': sitemap[key].get('priority', 0.5),
+                'ids': sitemap[key].get('ids', {})
             }
             context['object_list'] += (obj,)
+            context['DOMAIN'] = settings.DOMAIN
         return context

@@ -6,5 +6,5 @@ from views import SitemapView
 
 
 urlpatterns = patterns('',
-    (r'^sitemap\.xml', SitemapView.as_view()),
+    (r'^', SitemapView.as_view()),
 )

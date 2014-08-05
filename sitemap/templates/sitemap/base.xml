@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+{% load dict %}
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
    <url>
-
       <loc>http://{{ DOMAIN }}/</loc>
-
       <priority>0.8</priority>
-
    </url>
 
    <url>
-
       <loc>http://{{ DOMAIN }}/about/</loc>
-
       <priority>0.8</priority>
-
    </url>
 
    {% block extra %}{% endblock extra %}
 
-   {% block content %}{% endblock content %}
+   {% block content %}
+      {% for item in object_list %}
+         {% for obj in item.queryset %}
+            <url>
+               <loc>http://{{ DOMAIN }}{{ obj.get_url }}</loc>
+               <priority>{{ item.ids|get:obj.pk|default:item.priority }}</priority>
+            </url>
+         {% endfor %}
+      {% endfor %}
+   {% endblock content %}
 
 </urlset>
