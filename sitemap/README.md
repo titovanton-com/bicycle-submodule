@@ -36,7 +36,7 @@ Generate xml sitemap. Learn standart: [www.sitemaps.org](http://www.sitemaps.org
 
 ## Custom template
 
-You can make custom template. To add some extra url tags there are buildin block `extra`.
+You can make custom sitemap template. To add some extra url tags there are buildin block `extra`.
 
 Make template file with path `sitemap.xml`:
 
