@@ -1,6 +1,6 @@
 # Sitemap
 
-Generate xml sitemap. See also: [www.sitemaps.org](http://www.sitemaps.org, "www.sitemaps.org").
+Generate xml sitemap. See also: [www.sitemaps.org](http://www.sitemaps.org "www.sitemaps.org").
 
 I know, that there is a django.contrib.sitemap, but did you saw that? Usually contrib apps are pretty graceful, but
 in this case, there are much extra entities such as Sitemap class and Generics. It is not MVC architecture, such you have to write
