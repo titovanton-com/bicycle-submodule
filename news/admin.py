@@ -3,7 +3,7 @@
 
 from django.contrib import admin
 from django import forms
-from bicycle.core.admin import MetaSeoMixin
+from bicycle.admin import MetaSeoMixin
 
 from models import News
 
@@ -30,7 +30,7 @@ class NewsAdmin(admin.ModelAdmin):
     fieldsets = (
         (u'Основное', {'fields': ('title', 'slug', 'published', 'custom_created',
                                   'preview', 'text')}),
-        (u'SEO', {'fields': ('html_title', 'html_keywords', 'html_description',)}),
+        (u'SEO', {'fields': ('html_title', 'html_keywords', 'html_description', 'priority')}),
     )
 
 

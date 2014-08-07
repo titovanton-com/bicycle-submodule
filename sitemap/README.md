@@ -12,19 +12,6 @@ Generate xml sitemap. Learn standart: [www.sitemaps.org](http://www.sitemaps.org
         
         # ...)
 
-    # configure example
-    SITEMAP = {
-        'mainapp.Product': {
-            # not required, default: 0.5
-            'priority': 0.5,
-            # not required, default: empty dict
-            'ids': {
-                # an object of mainapp.Product with pk=5 has 0.8 priority
-                5: 0.8,
-            }
-        }
-    }
-
     # urls.py
     urlpatterns = patterns('',
         # ...
@@ -33,6 +20,21 @@ Generate xml sitemap. Learn standart: [www.sitemaps.org](http://www.sitemaps.org
 
         # ...
     )
+
+    # models.py
+    from bicycle.sitemap.models import SiteMapMixin
+
+    
+    class News(SiteMapMixin):
+        # ...
+
+        # is not required, default: 0.5
+        default_priority = 0.3
+
+        # is not required, by default returns cls.objects.all()
+        @classmethod
+        def get_sitemap_queryset(cls):
+            return cls.objects.published()
 
 ## Custom template
 
@@ -44,7 +46,7 @@ Make template file with path `sitemap.xml` in one of your accessable template fo
 
     {% block extra %}
        <url>
-          <loc>http://{{ DOMAIN }}/extra/</loc>
+          <loc>http://{{ request.META.HTTP_HOST }}/extra/</loc>
           <priority>0.8</priority>
        </url>
     {% endblock extra %}

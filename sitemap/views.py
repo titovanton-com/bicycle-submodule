@@ -3,6 +3,9 @@
 from django.conf import settings
 from django.db.models.loading import get_model
 from django.views.generic import TemplateView
+from bicycle.core.utilites import site_wild_classes
+
+from models import SiteMapMixin
 
 
 class SitemapView(TemplateView):
@@ -13,24 +16,10 @@ class SitemapView(TemplateView):
         # I have to reload this method, becouse of bug/error in TemplateView code
         return self.template_name
 
-    def get_settings(self):
-        return settings.SITEMAP
-
     def get_queryset(self, model):
         return model.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super(SitemapView, self).get_context_data(**kwargs)
-        sitemap = self.get_settings()
-        context['object_list'] = ()
-        for key in sitemap:
-            tmp = key.split('.')
-            model = get_model(*tmp)
-            obj = {
-                'queryset': self.get_queryset(model),
-                'priority': sitemap[key].get('priority', 0.5),
-                'ids': sitemap[key].get('ids', {})
-            }
-            context['object_list'] += (obj,)
-            context['DOMAIN'] = settings.DOMAIN
+        context['object_list'] = site_wild_classes('models', SiteMapMixin)
         return context
