@@ -9,10 +9,11 @@ code here...
 
 ## Features
 
-* model priority
-* object personal priority
-* filtering default queryset
-* extends default template
+* Add content of a model to sitemap.xml by mix it with SiteMapMixin
+* Model priority
+* Object personal priority
+* Filtering default queryset
+* Extends default template
 
 ## Install and configure
 
