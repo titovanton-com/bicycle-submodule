@@ -124,7 +124,7 @@ class UnicodeTitleSlugMixin(object):
 
 
 class TitleMixin(models.Model):
-    title = models.CharField(max_length=128, verbose_name=u'Название')
+    title = models.CharField(max_length=256, verbose_name=u'Название')
 
     class Meta:
         abstract = True
@@ -137,8 +137,8 @@ class UnicodeTitleMixin(object):
 
 
 class SlugMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
-    slug = models.SlugField(
-        max_length=128, unique=True, verbose_name=u'Краткое названия для URL')
+    slug = models.SlugField(max_length=256, unique=True,
+                            verbose_name=u'Краткое названия для URL')
 
     def save(self, *args, **kwargs):
         self.slug = valid_slug(self.slug)
@@ -149,7 +149,7 @@ class SlugMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
 
 
 class SlugBlankMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
-    slug = models.SlugField(max_length=128, unique=True, blank=True, null=True,
+    slug = models.SlugField(max_length=256, unique=True, blank=True, null=True,
                             verbose_name=u'Краткое названия для URL')
 
     def save(self, *args, **kwargs):
@@ -164,9 +164,9 @@ class SlugBlankMixin(TitleMixin, GetUrlMixin, UnicodeSlugMixin, EditLinkMixin):
 
 
 class ImgSeoMixin(models.Model):
-    image_title = models.CharField(max_length=128, blank=True,
+    image_title = models.CharField(max_length=256, blank=True,
                                    verbose_name=u'Атрибут изображения title')
-    image_alt = models.CharField(max_length=128, blank=True,
+    image_alt = models.CharField(max_length=256, blank=True,
                                  verbose_name=u'Атрибут изображения alt')
 
     class Meta:

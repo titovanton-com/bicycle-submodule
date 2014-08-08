@@ -3,6 +3,7 @@
 from django.db import models
 from bicycle.core.models import PublishedMixin
 from bicycle.core.models import SlugMixin
+from bicycle.core.models import EditLinkMixin
 from bicycle.core.models import SeoMixin
 from bicycle.sitemap.models import SiteMapMixin
 
@@ -18,7 +19,7 @@ class NewsBase(PublishedMixin, SlugMixin, SeoMixin):
         verbose_name_plural = u'Новости'
 
 
-class News(NewsBase, SiteMapMixin):
+class News(NewsBase, SiteMapMixin, EditLinkMixin):
     default_priority = 0.3
 
     @classmethod
