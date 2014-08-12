@@ -137,8 +137,8 @@ def valid_file_name(word):
     word = transliterate(word).lower().strip()
     patrn = r'[^a-zA-Z0-9_.()-]'
     repl = '-'
-    fingerprint = md5_random_string()
-    return u'%s-%s' % (fingerprint, re.sub(patrn, repl, word))
+    fingerprint = md5_random_string() # 32
+    return u'%s-%s' % (fingerprint, re.sub(patrn, repl, word[-20:]))
 
 
 def valid_slug(word):
