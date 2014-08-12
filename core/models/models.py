@@ -338,7 +338,7 @@ class OrderedMixin(models.Model):
 class SeoMixin(models.Model):
     html_title = models.CharField(max_length=256, blank=True,
                                   verbose_name=u'Название вкладки')
-    html_keywords = models.CharField(max_length=512, blank=True,
+    html_keywords = models.CharField(max_length=256, blank=True,
                                      verbose_name=u'Ключевики для поисковых систем')
     html_description = models.TextField(blank=True,
                                         verbose_name=u'Описание для поисковых систем')
