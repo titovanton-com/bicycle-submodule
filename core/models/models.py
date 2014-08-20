@@ -187,7 +187,7 @@ def thumbnail_admin(self, img, pk):
     return u'<a href="%s/"><img src="%s"/></a>' % (pk, url)
 
 
-class MixinLogo(ImgSeoMixin):
+class MixinLogo(models.Model):
 
     def logo_admin(self):
         return thumbnail_admin(self, self.logo, self.pk)
@@ -198,14 +198,14 @@ class MixinLogo(ImgSeoMixin):
         abstract = True
 
 
-class LogoMixin(MixinLogo):
+class LogoMixin(ImgSeoMixin, MixinLogo):
     logo = ImageField(upload_to=upload_logo, verbose_name=u'Лого')
 
     class Meta:
         abstract = True
 
 
-class LogoBlankMixin(MixinLogo):
+class LogoBlankMixin(ImgSeoMixin, MixinLogo):
     logo = ImageField(upload_to=upload_logo, blank=True, verbose_name=u'Лого')
 
     class Meta:
@@ -347,7 +347,7 @@ class SeoMixin(models.Model):
         abstract = True
 
 
-class ImageBase(ImgSeoMixin, EditLinkMixin):
+class ImageBase(ImgSeoMixin, EditLinkMixin, models.Model):
     position = models.PositiveIntegerField(
         default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     image = ImageField(upload_to=upload_file, verbose_name=u'Изображение')
