@@ -347,7 +347,7 @@ class SeoMixin(models.Model):
         abstract = True
 
 
-class ImageBase(ImgSeoMixin, EditLinkMixin, models.Model):
+class ImageBase(ImgSeoMixin, EditLinkMixin):
     position = models.PositiveIntegerField(
         default=DB_MAX_INT, verbose_name=u'Порядок в списке')
     image = ImageField(upload_to=upload_file, verbose_name=u'Изображение')
