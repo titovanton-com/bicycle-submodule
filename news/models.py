@@ -1,14 +1,14 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.core.models import PublishedMixin
-from bicycle.core.models import SlugMixin
+from bicycle.core.models import PublishedModel
+from bicycle.core.models import SlugModel
 from bicycle.core.models import EditLinkMixin
-from bicycle.core.models import SeoMixin
+from bicycle.core.models import SeoModel
 from bicycle.sitemap.models import SiteMapMixin
 
 
-class NewsBase(PublishedMixin, SlugMixin, SeoMixin):
+class NewsBase(PublishedModel, SlugModel, SeoModel):
     custom_created = models.DateField(verbose_name=u'Дата')
     preview = models.TextField(verbose_name=u'Анонс', blank=True)
     text = models.TextField(verbose_name=u'Текст')

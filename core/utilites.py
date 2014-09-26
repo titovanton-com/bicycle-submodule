@@ -150,8 +150,8 @@ def upload_file(instance, filename):
                         valid_file_name(filename))
 
 
-def upload_logo(instance, filename):
-    return os.path.join(u'%s_logo' % instance.__class__.__name__.lower(),
+def upload_cover(instance, filename):
+    return os.path.join(u'%s_cover' % instance.__class__.__name__.lower(),
                         valid_file_name(filename))
 
 

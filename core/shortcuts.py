@@ -3,14 +3,17 @@
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
 
 
-def get_page(query_set, limit, current_page):
+def get_page(query_set, request, limit=12):
     pager = Paginator(query_set, limit)
     try:
-        page = pager.page(current_page)
-    except EmptyPage:
+        page = pager.page(request.GET.get('page', 1))
+    except PageNotAnInteger:
         page = pager.page(1)
+    except EmptyPage:
+        page = pager.page(pager.num_pages)
     return page
 
 

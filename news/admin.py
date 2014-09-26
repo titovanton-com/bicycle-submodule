@@ -3,7 +3,7 @@
 
 from django.contrib import admin
 from django import forms
-from bicycle.admin import MetaSeoMixin
+from bicycle.admin import MetaSeoModel
 
 from models import News
 
@@ -18,8 +18,9 @@ def make_unpublished(modeladmin, request, queryset):
 
 class myNewsAdminForm(forms.ModelForm):
 
-    class Meta(MetaSeoMixin):
+    class Meta(MetaSeoModel):
         model = News
+        exclude = ()
 
 
 class NewsAdmin(admin.ModelAdmin):

@@ -1,16 +1,15 @@
 # coding: UTF-8
 
 from django.db import models
-from bicycle.core.models import SlugMixin
-from bicycle.core.models import LogoMixin
-from bicycle.core.models import SeoMixin
+from bicycle.core.models import SlugModel
+from bicycle.core.models import SeoModel
 from bicycle.core.utilites import machine_word
 from bicycle.core.utilites import transliterate
 from bicycle.core.shortcuts import true_icon
 from bicycle.core.shortcuts import false_icon
 
 
-class TagBase(SlugMixin):
+class TagBase(SlugModel):
     description = models.TextField(verbose_name=u'Описание', blank=True)
 
     def description_admin(self):
@@ -23,7 +22,7 @@ class TagBase(SlugMixin):
         abstract = True
 
 
-class TagsSetBase(SlugMixin):
+class TagsSetBase(SlugModel):
     # u should set tags field as in example bellow:
     # tags = models.ManyToManyField(Tag, verbose_name=u'Набор тегов')
     tags = None

@@ -10,11 +10,11 @@ from bicycle.core.models import DB_MAX_INT
 from bicycle.core.models import PhoneField
 from bicycle.core.models import PublishedQuerySet
 from bicycle.core.models import PublishedManager
-from bicycle.core.models import ChronologyMixin
-from bicycle.core.models import SlugMixin
-from bicycle.core.models import SeoMixin
-from bicycle.core.models import ChronologyMixin
-from bicycle.core.models import TitleMixin
+from bicycle.core.models import ChronologyModel
+from bicycle.core.models import SlugModel
+from bicycle.core.models import SeoModel
+from bicycle.core.models import ChronologyModel
+from bicycle.core.models import TitleModel
 from bicycle.core.utilites import md5_random_string
 
 
@@ -136,7 +136,7 @@ class ProductMeta(models.base.ModelBase):
         return new
 
 
-class ProductBase(OrderedMixin, ChronologyMixin, SlugMixin, SeoMixin):
+class ProductBase(PositionModel, ChronologyModel, SlugModel, SeoModel):
 
     # flags
     PUBLISHED_DEFAULT = True
@@ -213,7 +213,7 @@ class OrderMeta(models.base.ModelBase):
         return new
 
 
-class OrderBase(ChronologyMixin, BillingMixin):
+class OrderBase(ChronologyModel, BillingMixin):
 
     STATUS_CHOICES = (
         (u'In the process', u'В процессе'),
@@ -322,7 +322,7 @@ class OrderItemMeta(models.base.ModelBase):
         return new
 
 
-class OrderItemBase(TitleMixin):
+class OrderItemBase(TitleModel):
 
     """
         U should name ur subclass as OrderItem, or OrderBase.add_item will not work
