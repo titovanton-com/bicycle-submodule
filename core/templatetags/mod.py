@@ -18,3 +18,4 @@ def mod(value, arg):
 
 
 register.filter('mod', mod)
+register.filter('mod0', mod0)
