@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from django.core.context_processors import csrf
 from bicycle.futuremessage.models import FutureMessage
 from bicycle.core.views import ToDoView
-from bicycle.core.views import RenderWithContextMixin
+from bicycle.core.views import ResponseMixin
 from bicycle.rest.views import JsonResponseMixin
 
 
@@ -29,7 +29,7 @@ class CartContextMixin(CartMixin):
         return super(CartContextMixin, self).get_context_data(**kwargs)
 
 
-class CartViewBase(CartContextMixin, RenderWithContextMixin, ToDoView):
+class CartViewBase(CartContextMixin, ResponseMixin, ToDoView):
     add_form = None
     qty_form = None
     delete_form = None

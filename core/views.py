@@ -1,5 +1,7 @@
 # coding: UTF-8
 
+import json
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -12,8 +14,9 @@ class ToDoMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:
-            if 'todo' in kwargs:
-                method = '%s_%s' % (request.method.lower(), kwargs['todo'])
+            if 'todo' in kwargs and kwargs['todo']:
+                todo = kwargs['todo'].replace('-', '_')
+                method = '%s_%s' % (request.method.lower(), todo)
             elif self.todo is not None:
                 method = '%s_%s' % (request.method.lower(), self.todo)
             else:
@@ -24,16 +27,33 @@ class ToDoMixin(object):
         return handler(request, *args, **kwargs)
 
 
-class RenderWithContextMixin(ContextMixin):
+class StatusMixin(object):
 
-    def response(self, request, template, context, get_context_flag=True):
+    def status(self, status):
+        return HttpResponse(status=status)
+
+
+class ResponseMixin(StatusMixin, ContextMixin):
+
+    def response(self, request, template, context, get_context_flag=True, **kwargs):
         context.update({'request': request})
         if get_context_flag:
             context = self.get_context_data(**context)
-        return render(request, template, context)
+        return render(request, template, context, **kwargs)
 
     def redirect(*args, **kwargs):
         return redirect(*args, **kwargs)
+
+
+class JsonResponseMixin(StatusMixin):
+
+    def json_response(self, data=None, is_json=False, *args, **kwargs):
+        if data is not None:
+            if not is_json:
+                data = json.dumps(data)
+            return HttpResponse(data, content_type='application/json')
+        else:
+            return HttpResponse(*args, content_type='application/json', **kwargs)
 
 
 class FileResponseMixin(object):

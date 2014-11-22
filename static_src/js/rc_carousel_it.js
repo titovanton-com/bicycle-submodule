@@ -1,5 +1,5 @@
 /**
-  * @file fancybox-it.js
+  * @file rc-carousel-it.js
   *
   * Get all DOM objects with class rs-carousel,
   * get attribute data-items-per-transition and initial rsCarousel

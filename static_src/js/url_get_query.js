@@ -10,7 +10,7 @@ function parseParameters() {
         get[pair[0]] = pair[1]
     }
     return get
-}
+};
 
 /**
     Set URL GET parameters
@@ -46,4 +46,4 @@ function setParameters(get) {
         }
     }
     window.location.search = url
-}
+};

@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.contrib import auth
 from django.contrib.auth.models import User
 from bicycle.core.views import ToDoView
-from bicycle.core.views import RenderWithContextMixin
+from bicycle.core.views import ResponseMixin
 # from bicycle.core.forms import get_captcha_form
 from bicycle.core.utilites import machine_word
 from bicycle.core.utilites import transliterate
@@ -41,7 +41,7 @@ from messages import REGISTER_FAILED
 from messages import PASSWORD_RECOVERY_SUCCESS
 
 
-class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
+class LoginRegisterMixin(ResponseMixin, ToDoView):
 
     # path
     logout_destination = '/'
@@ -287,7 +287,7 @@ class LoginRegisterMixin(RenderWithContextMixin, ToDoView):
         return self.redirect(redirect_path)
 
 
-class UserRoomViewBase(RenderWithContextMixin, ToDoView):
+class UserRoomViewBase(ResponseMixin, ToDoView):
 
     def __get_password_change_form(self, request, *args, **kwargs):
         return self.change_password_form()
@@ -409,7 +409,7 @@ class RestAccountViewMixin(JsonResponseMixin, ToDoView):
             return self.response('U R !LOGGED IN')
 
 
-class InvitationsViewBase(RenderWithContextMixin, ToDoView):
+class InvitationsViewBase(ResponseMixin, ToDoView):
     template = 'accounts/invitation_page.html'
     model = None
 
