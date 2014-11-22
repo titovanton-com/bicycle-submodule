@@ -3,7 +3,6 @@
 import re
 
 from django.forms.fields import CharField
-from south.modelsinspector import add_introspection_rules
 
 
 class PhoneField(CharField):
@@ -23,7 +22,3 @@ class PassportField(CharField):
         if value is not None:
             value = re.sub('[^0-9]', '', value)
         return super(PassportField, self).to_python(value)
-
-
-add_introspection_rules([], ["^bicycle\.core\.models\.fields\.PhoneField"])
-add_introspection_rules([], ["^bicycle\.core\.models\.fields\.PassportField"])
