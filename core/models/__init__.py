@@ -191,7 +191,7 @@ class CoverMixin(models.Model):
 
     def cover_admin(self):
         return thumbnail_admin(self, self.cover, self.pk)
-    cover_admin.short_description = u'Лого'
+    cover_admin.short_description = u'Обложка'
     cover_admin.allow_tags = True
 
     class Meta:
@@ -199,14 +199,14 @@ class CoverMixin(models.Model):
 
 
 class CoverModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=upload_cover, verbose_name=u'Лого')
+    cover = ImageField(upload_to=upload_cover, verbose_name=u'Обложка')
 
     class Meta:
         abstract = True
 
 
 class CoverBlankModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=upload_cover, blank=True, verbose_name=u'Лого')
+    cover = ImageField(upload_to=upload_cover, blank=True, verbose_name=u'Обложка')
 
     class Meta:
         abstract = True
