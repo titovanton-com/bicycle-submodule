@@ -2,9 +2,13 @@
 
 import json
 
+from django.http import Http404
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
 
@@ -67,3 +71,50 @@ class FileResponseMixin(object):
 
 class ToDoView(ToDoMixin, View):
     pass
+
+
+class FilterMixin(object):
+    queryset = None
+
+    def apply_filter(self, request):
+        return self.queryset
+
+
+class PageFilterMixin(FilterMixin):
+    allow_empty = True
+    context_object_name = None
+    page_kwarg = 'page'
+    default_size = '3x4'
+
+    def apply_filter(self, request):
+        try:
+            page_num = int(request.GET.get(self.page_kwarg, 1))
+        except ValueError:
+            if self.allow_empty:
+                page_num = 1
+            else:
+                raise Http404
+
+        try:
+            size = request.GET.get(self.page_kwarg, self.default_size)
+            width, height = [int(i) for i in size.split('x')]
+        except ValueError:
+            if self.allow_empty:
+                width, height = [int(i) for i in self.default_size.split('x')]
+            else:
+                raise Http404
+
+        pager = Paginator(self.queryset, width * height)
+
+        try:
+            page = pager.page(page_num)
+        except EmptyPage:
+            if self.allow_empty:
+                page = pager.page(pager.num_pages)
+            else:
+                raise Http404
+
+        self.page = page
+        self.width = width
+        self.height = height
+        self.page_num = page_num

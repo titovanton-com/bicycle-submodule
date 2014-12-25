@@ -137,7 +137,7 @@ def valid_file_name(word):
     word = transliterate(word).lower().strip()
     patrn = r'[^a-zA-Z0-9_.()-]'
     repl = '-'
-    fingerprint = md5_random_string() # 32
+    fingerprint = md5_random_string()  # 32
     return u'%s-%s' % (fingerprint, re.sub(patrn, repl, word)[-20:])
 
 
@@ -162,7 +162,7 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-    
+
 
 def site_wild_classes(module_name, base_class, with_base_class=False):
     """Look at the INSTALLED_APPS and return list of classes"""
@@ -172,7 +172,7 @@ def site_wild_classes(module_name, base_class, with_base_class=False):
 
     for app_label in settings.INSTALLED_APPS:
         try:
-            module = importlib.import_module(app_label+'.'+module_name)
+            module = importlib.import_module(app_label + '.' + module_name)
             members = dict(inspect.getmembers(module, is_target)).values()
             for v in members:
                 if inspect.getmodule(v) is module:
