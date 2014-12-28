@@ -37,9 +37,9 @@ class DynamicMethodsMixin(object):
 
     """This mixin provide passing arguments to class object method, using method name.
 
-    For example: if your object *obj* has method with name *do_it* and it takes two ordered 
+    For example: if your object *obj* has method with name *do_it* and it takes two ordered
     arguments with names *age* and *growth*, then you can construct name for a method call,
-    using double underscore: 
+    using double underscore:
     ::
         obj.do_it__28__185()
     very usefull in djanto templates:

@@ -75,60 +75,6 @@ class ToDoView(ToDoMixin, View):
     pass
 
 
-<<<<<<< HEAD
-class QuerysetFilterMixin(object):
-
-    def apply_filter(self, request, **kwargs):
-        return self.queryset
-
-
-class PageFilterMixin(QuerysetFilterMixin):
-    object_list_kwarg = 'object_list'
-    page_kwarg = 'page'
-    page_size_kwarg = 'page_size'
-    start_page = 1
-    default_page_size = '3x3'
-
-    class PageFilterError(Exception):
-        pass
-
-    def _valid_page(self, request):
-        try:
-            page = int(request.GET.get(self.page_kwarg, self.start_page))
-        except ValueError:
-            page = self.start_page
-        return page
-
-    def _valid_page_size(self, request):
-        page_size = request.GET.get(self.page_size_kwarg, self.default_page_size)
-        try:
-            width, height = page_size.split('x')
-            width, height = int(width), int(height)
-        except ValueError:
-            width, height = self.default_page_size.split('x')
-            width, height = int(width), int(height)
-        return width, height
-
-    def apply_filter(self, request, **kwargs):
-        super(PageFilterMixin, self).apply_filter(request, **kwargs)
-        page_num = self._valid_page(request)
-        width, height = self._valid_page_size(request)
-        pager = Paginator(self.queryset, width * height)
-        try:
-            self.page = pager.page(page_num)
-        except EmptyPage:
-            self.page = pager.page(pager.num_pages)
-        self.page.width, self.page.height = width, height
-
-    def get_context_data(self, **kwargs):
-        c = super(PageFilterMixin, self).get_context_data(**kwargs)
-        try:
-            c['page'] = self.page
-            c['object_list'] = self.page.object_list
-        except AttributeError:
-            raise PageFilterError('You must to invocation apply_filter to initial self.page')
-        return c
-=======
 class FilterMixin(object):
     queryset = None
 
