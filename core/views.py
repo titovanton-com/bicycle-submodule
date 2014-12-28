@@ -84,6 +84,7 @@ class PageFilterMixin(FilterMixin):
     allow_empty = True
     context_object_name = None
     page_kwarg = 'page'
+    size_kwarg = 'page_size'
     default_size = '3x4'
 
     def apply_filter(self, request):
@@ -96,7 +97,7 @@ class PageFilterMixin(FilterMixin):
                 raise Http404
 
         try:
-            size = request.GET.get(self.page_kwarg, self.default_size)
+            size = request.GET.get(self.size_kwarg, self.default_size)
             width, height = [int(i) for i in size.split('x')]
         except ValueError:
             if self.allow_empty:
@@ -104,6 +105,7 @@ class PageFilterMixin(FilterMixin):
             else:
                 raise Http404
 
+        print width, height
         pager = Paginator(self.queryset, width * height)
 
         try:
@@ -113,7 +115,7 @@ class PageFilterMixin(FilterMixin):
                 page = pager.page(pager.num_pages)
             else:
                 raise Http404
-
+        self.queryset = page.object_list
         self.page = page
         self.width = width
         self.height = height

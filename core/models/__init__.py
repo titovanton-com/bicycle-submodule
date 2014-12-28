@@ -2,17 +2,22 @@
 """
 .. moduleauthor:: Titov Anton (mail@titovanton.com)
 """
-import os
 import inspect
+import os
+import re
 
-from django.db import models
-from django.http import Http404
-from django.contrib.auth.models import User
-from django.utils.timezone import now
-from django.utils.html import escape
 from django.conf import settings
-from sorl.thumbnail.fields import ImageField
+from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.core.exceptions import FieldError
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models.loading import get_model
+from django.http import Http404
+from django.utils.html import escape
+from django.utils.timezone import now
 from sorl.thumbnail import get_thumbnail
+from sorl.thumbnail.fields import ImageField
 
 from bicycle.core.utilites import valid_slug
 from bicycle.core.utilites import upload_file
@@ -372,6 +377,9 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
         else:
             return u'Изображения нет'
 
+    def to_html(self):
+        return self.image_html()
+
     def __unicode__(self):
         return u'%s with pk: %s' % (self.class_name(), self.pk)
 
@@ -406,3 +414,53 @@ class CoupleBase(TitleModel):
 
     class Meta:
         abstract = True
+
+
+class ParseMediaMixin(DynamicMethodsMixin):
+
+    """The mixin provide ability to inject an images and other snippets, such as video to a text.
+
+    Invocing in template parse method like below:
+    ::
+        {{ object.parse__description }}
+    you will get parsed text of description field, with replaced tags, such as:
+    ::
+        [[ mainapp.Image:kitty ]]
+    where mainapp - the app label, Image - the class of model with name Image and
+    kitty - the slug of an object.
+
+    .. note::
+        An Image object must have to_html method which returns text/html.
+
+    .. note::
+        - Parse method return empty string if an attribute does not exists.
+        - If an object does not exists or does not have slug attribute or does
+        not have to_html attribute, then the parser leave tag without replace.
+        - It also uses django cache system, so you have to delete cache every
+        time after save an Image object. There is the handler for that.
+    """
+
+    LOCAL_CACHE_KEY_PREFIX = 'parse-media:'
+    LOCAL_CACHE_TIMEOUT = settings.CACHE_TIMEOUT
+
+    def parse(self, field):
+        try:
+            text = getattr(self, field)
+        except AttributeError:
+            return ''
+        compiled = re.compile(r'(?P<tag>\[\[\s*(?P<content>(?P<model>\w+?\.\w+?)\:'
+                              r'(?P<slug>\w+?))\s*\]\])')
+        for m in compiled.finditer(text):
+            key = self.LOCAL_CACHE_KEY_PREFIX + m['content']
+            c = cache.get(key)
+            if c is not None:
+                replacement = c
+            else:
+                try:
+                    model = get_model(m['model'])
+                    replacement = model.objects.get(slug=m['slug']).to_html()
+                except (LookupError, AttributeError, FieldError, ObjectDoesNotExist):
+                    continue
+                cache.set(key, replacement, self.LOCAL_CACHE_TIMEOUT)
+            text = text.replace(m['tag'], replacement)
+        return text
