@@ -122,4 +122,3 @@ class PageFilterMixin(FilterMixin):
         self.width = width
         self.height = height
         self.page_num = page_num
->>>>>>> 736b6f8

@@ -82,6 +82,9 @@ class DynamicMethodsMixin(object):
 
 class ClassNameMixin(object):
 
+    def app_label(self):
+        return self._meta.app_label
+
     def class_name(self):
         return self.__class__.__name__
 
@@ -92,13 +95,13 @@ class GetUrlMixin(ClassNameMixin):
         return u'/%s/%s/' % (self.class_name().lower(), self.slug)
 
     def get_url_with_app(self):
-        return u'/%s/%s/%s/' % (self._meta.app_label, self.class_name().lower(), self.slug)
+        return u'/%s/%s/%s/' % (self.app_label(), self.class_name().lower(), self.slug)
 
     def get_url_by_pk(self):
         return u'/%s/pk/%s/' % (self.class_name().lower(), self.pk)
 
     def get_url_with_app_by_pk(self):
-        return u'/%s/%s/pk/%s/' % (self._meta.app_label, self.class_name().lower(), self.pk)
+        return u'/%s/%s/pk/%s/' % (self.app_label(), self.class_name().lower(), self.pk)
 
     def get_absolute_url(self):
         return self.get_url()
@@ -107,7 +110,7 @@ class GetUrlMixin(ClassNameMixin):
 class EditLinkMixin(ClassNameMixin):
 
     def get_admin_link(self):
-        return u'/admin/%s/%s/%s/' % (self._meta.app_label, self.class_name().lower(),
+        return u'/admin/%s/%s/%s/' % (self.app_label(), self.class_name().lower(),
                                       self.pk)
 
 
@@ -190,6 +193,16 @@ def thumbnail_admin(self, img, pk):
     else:
         url = u'http://dummyimage.com/100x100/e0e0e0/545454.jpg&text=dummy'
     return u'<a href="%s/"><img src="%s"/></a>' % (pk, url)
+
+
+def image_html(self, img):
+    if img.name:
+        code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
+               (self.image_alt, self.image_title, img.url)
+        return escape(code)
+    else:
+        url = u'http://dummyimage.com/100x100/e0e0e0/545454.jpg&text=dummy'
+        return u'<img src="%s"/>' % url
 
 
 class CoverMixin(models.Model):
@@ -361,12 +374,7 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
     thumbnail_admin.allow_tags = True
 
     def image_html(self):
-        if len(self.image):
-            code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
-                   (self.image_alt, self.image_title, self.image.url)
-            return escape(code)
-        else:
-            return u'Изображения нет'
+        return image_html(self, self.image)
 
     def image_py(self):
         if len(self.image):
@@ -376,9 +384,6 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
             return escape(code)
         else:
             return u'Изображения нет'
-
-    def to_html(self):
-        return self.image_html()
 
     def __unicode__(self):
         return u'%s with pk: %s' % (self.class_name(), self.pk)
@@ -449,18 +454,68 @@ class ParseMediaMixin(DynamicMethodsMixin):
         except AttributeError:
             return ''
         compiled = re.compile(r'(?P<tag>\[\[\s*(?P<content>(?P<model>\w+?\.\w+?)\:'
-                              r'(?P<slug>\w+?))\s*\]\])')
+                              r'(?P<slug>[0-9a-zA-Z-_]+?))\s*\]\])')
         for m in compiled.finditer(text):
-            key = self.LOCAL_CACHE_KEY_PREFIX + m['content']
+            d = m.groupdict()
+            key = self.LOCAL_CACHE_KEY_PREFIX + d['content']
             c = cache.get(key)
             if c is not None:
                 replacement = c
             else:
                 try:
-                    model = get_model(m['model'])
-                    replacement = model.objects.get(slug=m['slug']).to_html()
+                    model = get_model(d['model'])
+                    replacement = model.objects.get(slug=d['slug']).to_html()
                 except (LookupError, AttributeError, FieldError, ObjectDoesNotExist):
                     continue
                 cache.set(key, replacement, self.LOCAL_CACHE_TIMEOUT)
-            text = text.replace(m['tag'], replacement)
+            text = text.replace(d['tag'], replacement)
         return text
+
+
+class ParseMediaCacheMixin(object):
+
+    """
+    Usage:
+    ::
+        from django.db.models.signals import pre_delete
+        from django.db.models.signals import pre_save
+
+
+        pre_save.connect(SomeModel.clear_cached_tag, sender=SomeModel)
+        pre_delete.connect(SomeModel.clear_cached_tag, sender=SomeModel)
+
+    ..note::
+        It must have media_tag and to_html methods
+    """
+
+    LOCAL_CACHE_KEY_PREFIX = 'parse-media:'
+    LOCAL_CACHE_TIMEOUT = settings.CACHE_TIMEOUT
+
+    @classmethod
+    def clear_cached_tag(cls, sender, **kwargs):
+        obj = kwargs['instance']
+        if obj.pk:
+            old_obj = cls.objects.get(pk=obj.pk)
+            key = cls.LOCAL_CACHE_KEY_PREFIX + cls.media_tag(old_obj)[3:-3]
+            cache.delete(key)
+
+
+class ImageMedia(ParseMediaCacheMixin, ImageBase):
+    slug = models.SlugField(max_length=256, unique=True,
+                            verbose_name=u'Краткое названия для URL')
+
+    def media_tag(self):
+        return u'[[ %s.%s:%s ]]' % (self.app_label(), self.class_name(), self.slug)
+
+    def to_html(self):
+        if len(self.image):
+            code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
+                   (self.image_alt, self.image_title, self.image.url)
+            return code
+        else:
+            return ''
+
+    class Meta:
+        ordering = ['position', '-pk']
+        verbose_name_plural = u'Изображения'
+        abstract = True
