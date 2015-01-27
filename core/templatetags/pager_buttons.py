@@ -65,8 +65,8 @@ def pager(parser, token):
                 ...
             {% endpager %}
         Where page is Page from django.core.paginator,
-        3 is number of buttons attached to the left and right of current page button
-        p is list of numbers and ellipsis with length <= 3*2 + 1 + 2, when number of buttons eq 3,
+        3 is number of attached buttons to the left and right of current page button
+        p is list of numbers and dots with length <= 3*2 + 1 + 2, when number of buttons eq 3,
         for example:
             [1, '...', 5, 6, 7, 8, 9, '...', 50] # 7 - current page
     """

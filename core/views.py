@@ -78,47 +78,55 @@ class ToDoView(ToDoMixin, View):
 class FilterMixin(object):
     queryset = None
 
-    def apply_filter(self, request):
+    def get_queryset(self):
         return self.queryset
+
+    class FilterError(Exception):
+        pass
+
+    def apply_filter(self, request):
+        return self.get_queryset()
 
 
 class PageFilterMixin(FilterMixin):
+    paginate = True
     allow_empty = True
+    # wtf?
     context_object_name = None
     page_kwarg = 'page'
-    size_kwarg = 'page_size'
-    default_size = '3x4'
+    page_size_kwarg = 'page_size'
+    default_page_size = '6x4'
 
     def apply_filter(self, request):
-        try:
-            page_num = int(request.GET.get(self.page_kwarg, 1))
-        except ValueError:
-            if self.allow_empty:
-                page_num = 1
-            else:
-                raise Http404
+        if self.paginate:
+            try:
+                page_num = int(request.GET.get(self.page_kwarg, 1))
+            except ValueError:
+                if self.allow_empty:
+                    page_num = 1
+                else:
+                    raise Http404
 
-        try:
-            size = request.GET.get(self.size_kwarg, self.default_size)
-            width, height = [int(i) for i in size.split('x')]
-        except ValueError:
-            if self.allow_empty:
-                width, height = [int(i) for i in self.default_size.split('x')]
-            else:
-                raise Http404
+            try:
+                size = request.GET.get(self.page_size_kwarg, self.default_page_size)
+                rows, columns = [int(i) for i in size.split('x')]
+            except ValueError:
+                if self.allow_empty:
+                    rows, columns = [int(i) for i in self.default_page_size.split('x')]
+                else:
+                    raise Http404
 
-        print width, height
-        pager = Paginator(self.queryset, width * height)
+            pager = Paginator(self.get_queryset(), rows * columns)
 
-        try:
-            page = pager.page(page_num)
-        except EmptyPage:
-            if self.allow_empty:
-                page = pager.page(pager.num_pages)
-            else:
-                raise Http404
-        self.queryset = page.object_list
-        self.page = page
-        self.width = width
-        self.height = height
-        self.page_num = page_num
+            try:
+                page = pager.page(page_num)
+            except EmptyPage:
+                if self.allow_empty:
+                    page = pager.page(pager.num_pages)
+                else:
+                    raise Http404
+            # self.queryset = page.object_list
+            self.page = page
+            self.rows = rows
+            self.columns = columns
+            self.page_num = page_num

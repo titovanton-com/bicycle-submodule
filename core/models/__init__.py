@@ -86,6 +86,8 @@ class ClassNameMixin(object):
         return self._meta.app_label
 
     def class_name(self):
+        if self._meta.proxy:
+            return self._meta.proxy_for_model.__name__
         return self.__class__.__name__
 
 
