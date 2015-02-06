@@ -17,7 +17,8 @@ from django.http import Http404
 from django.utils.html import escape
 from django.utils.timezone import now
 from sorl.thumbnail import get_thumbnail
-from sorl.thumbnail.fields import ImageField
+# from sorl.thumbnail.fields import ImageField
+from fields import ExifLessImageField as ImageField
 
 from bicycle.core.utilites import valid_slug
 from bicycle.core.utilites import upload_file

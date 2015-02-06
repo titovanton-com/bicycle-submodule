@@ -12,10 +12,10 @@ class OrderMixin(object):
 
     def total_discounted(self, *args, **kwargs):
         raise NotImplementedError()
-    
+
     def total_price(self, *args, **kwargs):
         raise NotImplementedError()
-    
+
     def total_qty(self, *args, **kwargs):
         raise NotImplementedError()
 
@@ -24,7 +24,7 @@ class OrderMixin(object):
 
 
 class CartMixin(OrderMixin):
-    
+
     def make_an_order(self, *args, **kwargs):
         raise NotImplementedError()
 
