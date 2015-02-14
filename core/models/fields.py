@@ -40,11 +40,12 @@ class ExifLessImageField(SorlImageField):
     def pre_save(self, model_instance, add):
         f = super(ExifLessImageField, self).pre_save(model_instance, add)
 
-        try:
-            subprocess.check_call(['exiftool', '-all=', '-overwrite_original', f.path])
-        except OSError:
-            raise Exception('exiftool required for using ExifLessImageField')
-        except subprocess.CalledProcessError:
-            print 'exiftool returned none-zero exit for %s' % model_instance
+        if f.name:
+            try:
+                subprocess.check_call(['exiftool', '-all=', '-overwrite_original', f.path])
+            except OSError:
+                raise Exception('exiftool required for using ExifLessImageField')
+            except subprocess.CalledProcessError:
+                print 'exiftool returned none-zero exit for %s' % model_instance
 
         return f

@@ -188,7 +188,7 @@ def thumbnail_admin(self, img, pk):
     if img.name:
         image_path = os.path.join(settings.MEDIA_ROOT, str(img))
         try:
-            thumbnail = get_thumbnail(image_path, '100x100', quality=20)
+            thumbnail = get_thumbnail(image_path, '100x100', quality=80)
         except IOError:
             url = u'http://dummyimage.com/100x100/e0e0e0/de0000.jpg&text=IOError'
         else:
@@ -227,7 +227,10 @@ class CoverModel(CoverMixin, ImgSeoModel):
 
 
 class CoverBlankModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=upload_cover, blank=True, verbose_name=u'Обложка')
+    cover = ImageField(blank=True, upload_to=upload_cover, verbose_name=u'Обложка')
+
+    # def save(self, *args, **kwargs):
+    #     assert False
 
     class Meta:
         abstract = True
