@@ -79,6 +79,8 @@ class FilterMixin(object):
     queryset = None
 
     def get_queryset(self):
+        if self.queryset is None and getattr(self, 'model', False):
+            return self.model.objects.all()
         return self.queryset
 
     class FilterError(Exception):
