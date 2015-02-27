@@ -96,7 +96,7 @@ class PageFilterMixin(FilterMixin):
     # wtf?
     context_object_name = None
     page_kwarg = 'page'
-    page_size_kwarg = 'page_size'
+    page_size_kwarg = 'page-size'
     default_page_size = '6x4'
 
     def apply_filter(self, request):
