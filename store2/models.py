@@ -40,6 +40,18 @@ class CartItemMixin(object):
     def get_qty(self):
         raise NotImplementedError()
 
+    def get_saving(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def get_total_discounted(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def get_total_price(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def get_total_saving(self, *args, **kwargs):
+        raise NotImplementedError()
+
 
 class CartModelBase(CartMixin, models.Model):
     session_key = models.CharField(max_length=40, blank=True, null=True)

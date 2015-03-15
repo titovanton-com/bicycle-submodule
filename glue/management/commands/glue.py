@@ -23,6 +23,10 @@ class Command(BaseCommand):
                 ext = '.less'
             if conf['css_url']:
                 command += ['--url=%s' % conf['css_url']]
+            if conf['crop']:
+                command += ['--crop']
+            if conf['margin']:
+                command += ['--margin=%d' % conf['margin']]
         except KeyError:
             pass
 

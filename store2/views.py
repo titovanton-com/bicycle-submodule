@@ -7,6 +7,10 @@ from bicycle.core.views import ResponseMixin
 from bicycle.core.views import ToDoView
 
 
+class CartError(Exception):
+    pass
+
+
 class CartMixin(object):
 
     def get(self, request, *args, **kwargs):
@@ -45,20 +49,34 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
     template_name = 'cart/cart.html'
     widget_template = 'cart/widget.html'
 
-    def get(self, request, *args, **kwargs):
-        if self.model is not None:
+    cart = None
+
+    def _get_cart(self, request, *args, **kwargs):
+        if self.cart is not None:
+            return self.cart
+        elif self.model is not None:
             try:
-                obj = self.model.objects.get(session_key=session_start(request))
+                self.cart = self.model.objects.get(session_key=session_start(request))
             except ObjectDoesNotExist:
-                obj = self.model(session_key=session_start(request))
-            c = {'object': obj}
+                self.cart = self.model(session_key=session_start(request))
+                try:
+                    self.cart.full_clean()
+                except ValidationError:
+                    raise CartError('self.cart.full_clean() exception')
+                self.cart.save()
+            return self.cart
+        else:
+            raise CartError('model was not specified')
+
+    def _cart_has_the_item(self, request, item):
+        cart = self._get_cart(request)
+        reverse_relation = getattr(cart, self.reverse_relation)
+        return item in reverse_relation.all()
+
+    def get(self, request, *args, **kwargs):
+        c = {'object': self._get_cart(request)}
         return self.response(request, self.template_name, c)
 
     def get_widget(self, request, *args, **kwargs):
-        if self.model is not None:
-            try:
-                obj = self.model.objects.get(session_key=session_start(request))
-            except ObjectDoesNotExist:
-                obj = self.model(session_key=session_start(request))
-            c = {'object': obj}
+        c = {'object': self._get_cart(request)}
         return self.response(request, self.widget_template, c, False)

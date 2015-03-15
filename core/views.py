@@ -47,7 +47,7 @@ class ResponseMixin(StatusMixin, ContextMixin):
             context = self.get_context_data(**context)
         return render(request, template, context, **kwargs)
 
-    def redirect(*args, **kwargs):
+    def redirect(self, *args, **kwargs):
         return redirect(*args, **kwargs)
 
 
