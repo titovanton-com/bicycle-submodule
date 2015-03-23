@@ -25,11 +25,11 @@ class BillingMixin(models.Model):
     house = models.CharField(max_length=10, verbose_name=u'Дом')
     apartment = models.CharField(max_length=10, verbose_name=u'Квартира')
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 
-class TodaysQuerySetMixin(object):
+class TodaysQuerySetMixin:
 
     def get_todays_products(self, **kwargs):
         return self.get_published(todays_product=True, **kwargs)
@@ -38,7 +38,7 @@ class TodaysQuerySetMixin(object):
         return self.published(todays_product=True, **kwargs)
 
 
-class BestsellerQuerySetMixin(object):
+class BestsellerQuerySetMixin:
 
     def get_best_sellers(self, **kwargs):
         return self.get_published(best_seller=True, **kwargs)
@@ -47,7 +47,7 @@ class BestsellerQuerySetMixin(object):
         return self.published(best_seller=True, **kwargs)
 
 
-class OnSaleQuerySetMixin(object):
+class OnSaleQuerySetMixin:
 
     def get_on_sale(self, **kwargs):
         return self.get_published(discount__gt=0, **kwargs)
@@ -56,7 +56,7 @@ class OnSaleQuerySetMixin(object):
         return self.published(discount__gt=0, **kwargs)
 
 
-class NewestQuerySetMixin(object):
+class NewestQuerySetMixin:
 
     def get_newest(self, **kwargs):
         d = now() - timedelta(days=settings.STORE_GOODS_FRESHNESS)
@@ -161,7 +161,7 @@ class ProductBase(PositionModel, ChronologyModel, SlugModel, SeoModel):
     def get_url(self):
         return self.get_url_with_app()
 
-    class Meta(object):
+    class Meta:
         abstract = True
         verbose_name_plural = u'Товары'
 
@@ -194,7 +194,7 @@ class CartItemBase(models.Model):
     def total_price_with_discount(self):
         return self.product.get_price_with_discount() * self.qty
 
-    class Meta(object):
+    class Meta:
         abstract = True
         ordering = ['-pk']
 
@@ -301,7 +301,7 @@ class OrderBase(ChronologyModel, BillingMixin):
     def __unicode__(self):
         return u'Order object with oid: %s' % self.oid
 
-    class Meta(object):
+    class Meta:
         abstract = True
         verbose_name_plural = u'Заказы'
 
@@ -354,7 +354,7 @@ class OrderItemBase(TitleModel):
         except PRODUCT_MODEL.DoesNotExist:
             return False
 
-    class Meta(object):
+    class Meta:
         abstract = True
         ordering = ['-pk']
         verbose_name_plural = u'Строки заказа'

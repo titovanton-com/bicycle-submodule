@@ -48,7 +48,7 @@ class DynamicMethodsMixin(object):
         {{ obj.do_it__28__185 }}
     """
 
-    class __MethodWrapper(object):
+    class __MethodWrapper:
 
         def __init__(self, this, method, *args):
             self.__this = this

@@ -4,7 +4,8 @@ from message import Message
 from models import FutureMessage
 
 
-class FutureMessageMiddleware(object):
+class FutureMessageMiddleware:
+
     def process_request(self, request):
         if not request.is_ajax():
             if request.user.is_authenticated():
@@ -14,5 +15,3 @@ class FutureMessageMiddleware(object):
             msgs = FutureMessage.objects.filter(**f)
             request.alert_messages = [Message(m.mtype, m.text, m.title) for m in msgs]
             msgs.delete()
-
-        

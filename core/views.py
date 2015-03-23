@@ -15,7 +15,7 @@ from django.views.generic.base import ContextMixin
 from shortcuts import get_page
 
 
-class ToDoMixin(object):
+class ToDoMixin:
     todo = None
 
     def dispatch(self, request, *args, **kwargs):
@@ -33,7 +33,7 @@ class ToDoMixin(object):
         return handler(request, *args, **kwargs)
 
 
-class StatusMixin(object):
+class StatusMixin:
 
     def status(self, status):
         return HttpResponse(status=status)
@@ -62,7 +62,7 @@ class JsonResponseMixin(StatusMixin):
             return HttpResponse(*args, content_type='application/json', **kwargs)
 
 
-class FileResponseMixin(object):
+class FileResponseMixin:
 
     def file_response(self, file_url, filename):
         response = HttpResponse(mimetype='application/force-download')
@@ -75,7 +75,7 @@ class ToDoView(ToDoMixin, View):
     pass
 
 
-class FilterMixin(object):
+class FilterMixin:
     queryset = None
 
     def get_queryset(self):

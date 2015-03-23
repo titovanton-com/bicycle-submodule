@@ -3,7 +3,8 @@
 import re
 
 
-class Message(object):
+class Message:
+
     def __init__(self, mtype, text, title=None):
         assert mtype in ['info', 'success', 'error']
         self.mtype = mtype
@@ -17,4 +18,3 @@ class Message(object):
                 'error': 'Ошибка!',
             }
             self.title = case[mtype]
-

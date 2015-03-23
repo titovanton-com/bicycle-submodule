@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class InvitationAdminMixin(object):
+class InvitationAdminMixin:
     list_display = ('unique_email', 'status')
     fields = ('unique_email',)
     actions = ('send_email',)

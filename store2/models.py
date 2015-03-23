@@ -24,9 +24,7 @@ class OrderMixin(object):
 
 
 class CartMixin(OrderMixin):
-
-    def make_an_order(self, *args, **kwargs):
-        raise NotImplementedError()
+    pass
 
 
 class CartItemMixin(object):
@@ -56,7 +54,7 @@ class CartItemMixin(object):
 class CartModelBase(CartMixin, models.Model):
     session_key = models.CharField(max_length=40, blank=True, null=True)
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 
@@ -66,22 +64,25 @@ class CartItemModelBase(CartItemMixin, models.Model):
     content_object = GenericForeignKey()
     qty = models.PositiveIntegerField(default=1)
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 
 class OrderModelBase(OrderMixin, models.Model):
-    session_key = models.CharField(max_length=40, blank=True, null=True)
+    # session_key = models.CharField(max_length=40, blank=True, null=True)
 
-    class Meta(object):
+    def get_order_number(self):
+        raise NotImplementedError()
+
+    class Meta:
         abstract = True
 
 
-class OrderItemModelBase(CartItemMixin, TitleModel, CoverModel):
+class OrderItemModelBase(CartItemMixin, TitleModel):
     link = models.TextField()
     price = models.PositiveIntegerField()
     discount = models.PositiveIntegerField()
     qty = models.PositiveIntegerField()
 
-    class Meta(object):
+    class Meta:
         abstract = True

@@ -15,13 +15,13 @@ class CarouselBase(SlugModel):
     def get_images(self):
         return self.carouselimage_set.all()
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 
 class Carousel(CarouselBase):
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = u'Карусель'
 
 

@@ -5,7 +5,7 @@ import json
 from django.http import HttpResponse
 
 
-class JsonResponseMixin(object):
+class JsonResponseMixin:
 
     def response(self, data=None, is_json=False, *args, **kwargs):
         if data is not None:

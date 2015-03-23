@@ -19,7 +19,7 @@ def default_return(func):
     return _inner
 
 
-class CartBase(object):
+class CartBase:
     PRODUCT_MODEL = None
     CART_ITEM_MODEL = None
     ORDER_ITEM_MODEL = None

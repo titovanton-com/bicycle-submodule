@@ -55,7 +55,7 @@ class CartRowDeleteBaseForm(forms.Form):
 class CheckoutBaseForm(forms.ModelForm):
     confirm = forms.BooleanField(required=True)
 
-    class Meta(object):
+    class Meta:
         # model = ORDER_MODEL
         exclude = ['user', 'created', 'updated', 'status', 'oid', ]
         widgets = {
@@ -65,7 +65,7 @@ class CheckoutBaseForm(forms.ModelForm):
 
 class OrderEditForme(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         # model = ORDER_MODEL
         fields = ('status', 'payment_method', 'user', 'first_name', 'last_name', 'email',
                   'phone', 'city', 'street', 'house', 'apartment', 'note',)

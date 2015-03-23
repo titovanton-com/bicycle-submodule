@@ -11,7 +11,7 @@ class CartError(Exception):
     pass
 
 
-class CartMixin(object):
+class CartMixin:
 
     def get(self, request, *args, **kwargs):
         raise NotImplementedError()
@@ -39,6 +39,7 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
     model = None
     item_model = None
     order_model = None
+    orderitem_model = None
     reverse_relation = 'cartitem_set'
 
     add_form = None

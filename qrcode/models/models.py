@@ -75,5 +75,5 @@ class QRCodeMixin(models.Model):
         self.qr_qrcode(*args, **kwargs)
         super(QRCodeMixin, self).save(*args, **kwargs)
 
-    class Meta(object):
+    class Meta:
         abstract = True

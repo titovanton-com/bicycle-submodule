@@ -10,7 +10,7 @@ from bicycle.core.views import ResponseMixin
 from bicycle.rest.views import JsonResponseMixin
 
 
-class CartMixin(object):
+class CartMixin:
 
     """
     Use it before ToDoMixin in base list

@@ -11,9 +11,9 @@ def false_icon():
 
 def true_icon():
     return u'<img alt="True" src="%sadmin/img/icon-yes.gif">' % settings.STATIC_URL
-    
 
-class MetaSeoMixin(object):
+
+class MetaSeoMixin:
     widgets = {
         'html_keywords': admin.widgets.AdminTextareaWidget,
         'html_description': admin.widgets.AdminTextareaWidget,
@@ -22,14 +22,14 @@ class MetaSeoMixin(object):
 
 def make_published(modeladmin, request, queryset):
     rows_updated = queryset.update(published=True)
-    modeladmin.message_user(request, 
+    modeladmin.message_user(request,
         "%s объект(ов) успешно опубликован(ы)." % rows_updated)
 make_published.short_description = u'Опубликовать'
 
 
 def make_unpublished(modeladmin, request, queryset):
     rows_updated = queryset.update(published=False)
-    modeladmin.message_user(request, 
+    modeladmin.message_user(request,
         "%s объект(ов) успешно снят(ы) с публикации." % rows_updated)
 make_unpublished.short_description = u'Убрать флаг публикации'
 
@@ -53,7 +53,7 @@ class MediaTranslationMeta(type):
         return new
 
 
-class RedirectOnSaveMixin(object):
+class RedirectOnSaveMixin:
     def response_add(self, request, obj, post_url_continue=None):
         return HttpResponseRedirect(obj.get_url())
 
