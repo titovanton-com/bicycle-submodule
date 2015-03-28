@@ -74,8 +74,11 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
         reverse_relation = getattr(cart, self.reverse_relation)
         return item in reverse_relation.all()
 
+    def _get_context_data(self, request, *args, **kwargs):
+        return {'object': self._get_cart(request)}
+
     def get(self, request, *args, **kwargs):
-        c = {'object': self._get_cart(request)}
+        c = self._get_context_data(request, *args, **kwargs)
         return self.response(request, self.template_name, c)
 
     def get_widget(self, request, *args, **kwargs):
