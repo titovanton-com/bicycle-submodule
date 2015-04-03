@@ -19,6 +19,9 @@ class CartMixin:
     def get_widget(self, request, *args, **kwargs):
         raise NotImplementedError()
 
+    def in_the_cart(self, request, *args, **kwargs):
+        raise NotImplementedError()
+
     def post_add(self, request, *args, **kwargs):
         raise NotImplementedError()
 
@@ -31,7 +34,10 @@ class CartMixin:
     def post_delete(self, request, *args, **kwargs):
         raise NotImplementedError()
 
-    def post_one_click(self, request, *args, **kwargs):
+    def post_make_an_order(self, request, todo):
+        raise NotImplementedError()
+
+    def post_one_click_buy(self, request, *args, **kwargs):
         raise NotImplementedError()
 
 
@@ -46,6 +52,7 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
     change_form = None
     delete_form = None
     one_click_form = None
+    in_the_cart_form = None
 
     template_name = 'cart/cart.html'
     widget_template = 'cart/widget.html'
@@ -84,3 +91,18 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
     def get_widget(self, request, *args, **kwargs):
         c = {'object': self._get_cart(request)}
         return self.response(request, self.widget_template, c, False)
+
+
+class YandexMoneyViewBase(ResponseMixin, JsonResponseMixin, ToDoView):
+
+    def checking_order(self, request, todo):
+        raise NotImplementedError()
+
+    def transfer_notice(self, request, todo):
+        raise NotImplementedError()
+
+    def success(self, request, todo):
+        raise NotImplementedError()
+
+    def fail(self, request, todo):
+        raise NotImplementedError()
