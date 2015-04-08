@@ -10,7 +10,8 @@ class PhoneField(CharField):
         super(PhoneField, self).__init__(max_length=11, *args, **kwargs)
 
     def to_python(self, value):
-        value = re.sub('[^0-9]', '', value)
+        if value is not None:
+            value = re.sub('[^0-9]', '', value)
         return super(PhoneField, self).to_python(value)
 
 
