@@ -117,7 +117,7 @@ class EditLinkMixin(ClassNameMixin):
                                       self.pk)
 
 
-class UnicodeTitleSlugModel(ClassNameMixin):
+class UnicodeTitleSlugMixin(ClassNameMixin):
 
     def __unicode__(self):
         if settings.DEBUG and self.slug or not self.title and self.slug:
