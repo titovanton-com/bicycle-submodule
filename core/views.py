@@ -15,7 +15,7 @@ from django.views.generic.base import ContextMixin
 from shortcuts import get_page
 
 
-class ToDoMixin:
+class ToDoMixin(object):
     todo = None
 
     def dispatch(self, request, *args, **kwargs):
