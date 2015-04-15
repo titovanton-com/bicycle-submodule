@@ -19,7 +19,9 @@ class ToDoMixin:
     todo = None
 
     def dispatch(self, request, *args, **kwargs):
+
         if request.method.lower() in self.http_method_names:
+
             if 'todo' in kwargs and kwargs['todo']:
                 todo = kwargs['todo'].replace('-', '_')
                 method = '%s_%s' % (request.method.lower(), todo)
@@ -28,9 +30,25 @@ class ToDoMixin:
             else:
                 method = request.method.lower()
             handler = getattr(self, method, self.http_method_not_allowed)
+
+            if kwargs.get('handler_prefix', False):
+                method = '%s_%s' % (hwargs['handler_prefix'], method)
+            elif kwargs.get('handler_suffix', False):
+                method = '%s_%s' % (method, hwargs['handler_suffix'])
         else:
             handler = self.http_method_not_allowed
+
         return handler(request, *args, **kwargs)
+
+
+class ToDoAjaxMixin(ToDoMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.is_ajax():
+            kwargs['handler_prefix'] = 'ajax'
+
+        return super(ToDoAjaxMixin, self).dispatch(request, *args, **kwargs)
 
 
 class StatusMixin:
@@ -72,6 +90,10 @@ class FileResponseMixin:
 
 
 class ToDoView(ToDoMixin, View):
+    pass
+
+
+class ToDoAjaxView(ToDoAjaxMixin, View):
     pass
 
 
