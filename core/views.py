@@ -16,25 +16,29 @@ from shortcuts import get_page
 
 
 class ToDoMixin(object):
+    handler_prefix = None
+    handler_suffix = None
     todo = None
 
     def dispatch(self, request, *args, **kwargs):
 
         if request.method.lower() in self.http_method_names:
+            todo = kwargs.pop('todo', '').replace('-', '_')
 
-            if 'todo' in kwargs and kwargs['todo']:
-                todo = kwargs['todo'].replace('-', '_')
+            if todo:
                 method = '%s_%s' % (request.method.lower(), todo)
+                self.todo = todo
             elif self.todo is not None:
                 method = '%s_%s' % (request.method.lower(), self.todo)
             else:
                 method = request.method.lower()
-            handler = getattr(self, method, self.http_method_not_allowed)
 
-            if kwargs.get('handler_prefix', False):
-                method = '%s_%s' % (hwargs['handler_prefix'], method)
-            elif kwargs.get('handler_suffix', False):
-                method = '%s_%s' % (method, hwargs['handler_suffix'])
+            if self.handler_prefix is not None:
+                method = '%s_%s' % (self.handler_prefix, method)
+            elif self.handler_suffix is not None:
+                method = '%s_%s' % (method, self.handler_suffix)
+
+            handler = getattr(self, method, self.http_method_not_allowed)
         else:
             handler = self.http_method_not_allowed
 
@@ -46,7 +50,7 @@ class ToDoAjaxMixin(ToDoMixin):
     def dispatch(self, request, *args, **kwargs):
 
         if request.is_ajax():
-            kwargs['handler_prefix'] = 'ajax'
+            self.handler_prefix = 'ajax'
 
         return super(ToDoAjaxMixin, self).dispatch(request, *args, **kwargs)
 
