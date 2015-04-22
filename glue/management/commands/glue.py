@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         conf = settings.GLUE_CONFIG
-        command = ['glue', conf['source'], conf['output'], '--project', '--recursive', ]
+        command = ['glue', conf['source'], conf['output'], '--recursive', '--project', ]
         ext = '.css'
 
         try:
