@@ -431,10 +431,13 @@ class ParseMediaMixin(DynamicMethodsMixin):
 
     """The mixin provide ability to inject an images and other snippets, such as video to a text.
 
-    Invocing in template parse method like below:
+    Invocing in template:
     ::
         {{ object.parse__description }}
-    you will get parsed text of description field, with replaced tags, such as:
+
+    where description - model field.
+
+    Tags specification:
     ::
         [[ mainapp.Image:kitty ]]
     where mainapp - the app label, Image - the class of model with name Image and
@@ -442,6 +445,13 @@ class ParseMediaMixin(DynamicMethodsMixin):
 
     .. note::
         An Image object must have to_html method which returns text/html.
+
+    ::
+        [[ mainapp.Image:kitty:src ]]
+    this one returns only path to a file and invoce to_src insted of to_html.
+
+    .. note::
+        An Image object must have to_src method which returns text/html.
 
     .. note::
         - Parse method return empty string if an attribute does not exists.
@@ -455,26 +465,45 @@ class ParseMediaMixin(DynamicMethodsMixin):
     LOCAL_CACHE_TIMEOUT = settings.CACHE_TIMEOUT
 
     def parse(self, field):
+
         try:
             text = getattr(self, field)
         except AttributeError:
             return ''
-        compiled = re.compile(r'(?P<tag>\[\[\s*(?P<content>(?P<model>\w+?\.\w+?)\:'
-                              r'(?P<slug>[0-9a-zA-Z-_]+?))\s*\]\])')
-        for m in compiled.finditer(text):
+
+        cmld_to_html = re.compile(
+            r'(?P<tag>\[\['
+            r'\s*(?P<content>(?P<model>\w+?\.\w+?)\:(?P<slug>[0-9a-zA-Z-_]+?)'
+            r'(?P<src>:src)?)'
+            r'\s*\]\])')
+
+        for m in cmld_to_html.finditer(text):
             d = m.groupdict()
             key = self.LOCAL_CACHE_KEY_PREFIX + d['content']
             c = cache.get(key)
+
             if c is not None:
                 replacement = c
+
             else:
+
                 try:
                     model = get_model(d['model'])
-                    replacement = model.objects.get(slug=d['slug']).to_html()
+                    obj = model.objects.get(slug=d['slug'])
+
+                    if d['src'] is None:
+                        replacement = obj.to_html()
+
+                    else:
+                        replacement = obj.to_src()
+
                 except (LookupError, AttributeError, FieldError, ObjectDoesNotExist):
                     continue
+
                 cache.set(key, replacement, self.LOCAL_CACHE_TIMEOUT)
+
             text = text.replace(d['tag'], replacement)
+
         return text
 
 
@@ -513,11 +542,20 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
     def media_tag(self):
         return u'[[ %s.%s:%s ]]' % (self.app_label(), self.class_name(), self.slug)
 
+    def media_tag_src(self):
+        return u'[[ %s.%s:%s:src ]]' % (self.app_label(), self.class_name(), self.slug)
+
     def to_html(self):
         if len(self.image):
             code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
                    (self.image_alt, self.image_title, self.image.url)
             return code
+        else:
+            return ''
+
+    def to_src(self):
+        if len(self.image):
+            return self.image.url
         else:
             return ''
 
