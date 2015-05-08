@@ -9,7 +9,7 @@ code here...
 
 ## Features
 
-* Add content of a model to sitemap.xml by mix it with SiteMapMixin
+* Add content of a model to sitemap.xml by mix it with SiteMapModel
 * Model priority
 * Object personal priority
 * Filtering default queryset
@@ -22,7 +22,7 @@ code here...
         # ...
 
         'bicycle.sitemap',
-        
+
         # ...)
 
     # urls.py
@@ -35,10 +35,10 @@ code here...
     )
 
     # models.py
-    from bicycle.sitemap.models import SiteMapMixin
+    from bicycle.sitemap.models import SiteMapModel
 
 
-    class News(SiteMapMixin):
+    class News(SiteMapModel):
         # ...
 
         # is not required, default: 0.5

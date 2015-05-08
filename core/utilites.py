@@ -1,14 +1,11 @@
 # coding: UTF-8
 
 import hashlib
-import importlib
-import inspect
 import os
 import re
 
 from django.conf import settings
 from django.utils.timezone import now
-# from django.db import models
 
 
 class TemplateNotAvailable(Exception):
@@ -117,23 +114,3 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-
-
-def site_wild_classes(module_name, base_class, with_base_class=False):
-    """Look at the INSTALLED_APPS and return list of classes"""
-
-    def is_target(v):
-        return inspect.isclass(v) and issubclass(v, base_class)
-
-    for app_label in settings.INSTALLED_APPS:
-        try:
-            module = importlib.import_module(app_label + '.' + module_name)
-            members = dict(inspect.getmembers(module, is_target)).values()
-            for v in members:
-                if inspect.getmodule(v) is module:
-                    if v is base_class and with_base_class:
-                        yield v
-                    elif v is not base_class:
-                        yield v
-        except ImportError:
-            pass

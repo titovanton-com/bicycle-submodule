@@ -19,10 +19,10 @@ class CarouselBase(SlugModel):
         abstract = True
 
 
-class Carousel(CarouselBase):
+# class Carousel(CarouselBase):
 
-    class Meta:
-        verbose_name_plural = u'Карусель'
+#     class Meta:
+#         verbose_name_plural = u'Карусель'
 
 
 class CarouselImageBase(ImageBase):
@@ -32,9 +32,9 @@ class CarouselImageBase(ImageBase):
         abstract = True
 
 
-class CarouselImage(CarouselImageBase):
-    carousel = models.ForeignKey(Carousel, verbose_name=u'Карусель')
+# class CarouselImage(CarouselImageBase):
+#     carousel = models.ForeignKey(Carousel, verbose_name=u'Карусель')
 
-    class Meta:
-        ordering = ['position', '-pk']
-        verbose_name_plural = u'Изображения для Карусели'
+#     class Meta:
+#         ordering = ['position', '-pk']
+#         verbose_name_plural = u'Изображения для Карусели'

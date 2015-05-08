@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class SiteMapMixin(models.Model):
+class SiteMapModel(models.Model):
     PRIORITY_CHOICES = (
         (-1, u'По умолчанию'),
         (0.0, 0.0),
@@ -19,7 +19,7 @@ class SiteMapMixin(models.Model):
         (1.0, 1.0),
     )
 
-    priority = models.FloatField(default=-1, choices=PRIORITY_CHOICES, 
+    priority = models.FloatField(default=-1, choices=PRIORITY_CHOICES,
                                  verbose_name=u'Приоритет sitemap.xml')
 
     default_priority = 0.5
