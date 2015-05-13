@@ -17,12 +17,10 @@ from django.http import Http404
 from django.utils.html import escape
 from django.utils.timezone import now
 from sorl.thumbnail import get_thumbnail
-# from sorl.thumbnail.fields import ImageField
 from fields import ExifLessImageField as ImageField
 
-from bicycle.core.utilites import valid_slug
 from bicycle.core.utilites import upload_file
-from bicycle.core.utilites import upload_cover
+from bicycle.core.utilites import valid_slug
 
 
 DB_MAX_INT = 2147483647
@@ -220,14 +218,14 @@ class CoverMixin(models.Model):
 
 
 class CoverModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=upload_cover, verbose_name=u'Обложка')
+    cover = ImageField(upload_to=upload_file('cover'), verbose_name=u'Обложка')
 
     class Meta:
         abstract = True
 
 
 class CoverBlankModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(blank=True, upload_to=upload_cover, verbose_name=u'Обложка')
+    cover = ImageField(blank=True, upload_to=upload_file('cover'), verbose_name=u'Обложка')
 
     # def save(self, *args, **kwargs):
     #     assert False
@@ -372,7 +370,7 @@ class SeoModel(models.Model):
 
 
 class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
-    image = ImageField(upload_to=upload_file, verbose_name=u'Изображение')
+    image = ImageField(upload_to=upload_file(), verbose_name=u'Изображение')
 
     def thumbnail_admin(self):
         return thumbnail_admin(self, self.image, self.pk)
@@ -536,6 +534,11 @@ class ParseMediaCacheMixin(object):
 
 
 class ImageMedia(ParseMediaCacheMixin, ImageBase):
+
+    """
+    Read ParseMediaCacheMixin and ParseMediaMixin usage
+    """
+
     slug = models.SlugField(max_length=256, unique=True,
                             verbose_name=u'Краткое названия для URL')
 
