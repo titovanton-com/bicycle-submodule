@@ -5,7 +5,7 @@
 
    <url>
       <loc>http://{{ request.META.HTTP_HOST }}/</loc>
-      <priority>0.8</priority>
+      <priority>0.9</priority>
    </url>
 
    {% block extra %}{% endblock extra %}

@@ -11,6 +11,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
+from django.views.generic.base import RedirectView
 
 from shortcuts import get_page
 
@@ -158,3 +159,7 @@ class PageFilterMixin(FilterMixin):
             self.rows = rows
             self.columns = columns
             self.page_num = page_num
+
+
+class Redirect301View(RedirectView):
+    permanent = True
