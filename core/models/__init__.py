@@ -19,7 +19,7 @@ from django.utils.timezone import now
 from sorl.thumbnail import get_thumbnail
 from fields import ExifLessImageField as ImageField
 
-from bicycle.core.utilites import upload_file
+from bicycle.core.utilites import UploadToDir
 from bicycle.core.utilites import valid_slug
 
 
@@ -218,14 +218,14 @@ class CoverMixin(models.Model):
 
 
 class CoverModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=upload_file('cover'), verbose_name=u'Обложка')
+    cover = ImageField(upload_to=UploadToDir('cover'), verbose_name=u'Обложка')
 
     class Meta:
         abstract = True
 
 
 class CoverBlankModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(blank=True, upload_to=upload_file('cover'), verbose_name=u'Обложка')
+    cover = ImageField(blank=True, upload_to=UploadToDir('cover'), verbose_name=u'Обложка')
 
     # def save(self, *args, **kwargs):
     #     assert False
@@ -370,7 +370,7 @@ class SeoModel(models.Model):
 
 
 class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
-    image = ImageField(upload_to=upload_file(), verbose_name=u'Изображение')
+    image = ImageField(upload_to=UploadToDir(), verbose_name=u'Изображение')
 
     def thumbnail_admin(self):
         return thumbnail_admin(self, self.image, self.pk)

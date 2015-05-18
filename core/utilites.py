@@ -5,6 +5,7 @@ import os
 import re
 
 from django.conf import settings
+from django.utils.deconstruct import deconstructible
 from django.utils.timezone import now
 
 
@@ -97,18 +98,21 @@ def valid_slug(word):
     return machine_word(transliterate(word))
 
 
-def upload_file(suffix=''):
+@deconstructible
+class UploadToDir(object):
+    path = "students/{0}/{1}{2}"
 
-    def generate(instance, filename):
+    def __init__(self, suffix=None):
+        self.suffix = suffix
+
+    def __call__(self, instance, filename):
         root_dir = instance.__class__.__name__.lower()
 
-        if suffix:
-            root_dir += '_' + suffix
+        if self.suffix is not None:
+            root_dir += '_' + self.suffix
 
         file_name = valid_file_name(filename)
         return os.path.join(root_dir, file_name[0:2], file_name[2:4], file_name)
-
-    return generate
 
 
 def get_client_ip(request):
