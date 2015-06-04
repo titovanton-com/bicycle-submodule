@@ -2,10 +2,15 @@
 
 import re
 
+import dateutil.parser
+
 from django.forms.fields import CharField
+from django.forms.fields import DateTimeField
+from django.utils.encoding import force_str
 
 
 class PhoneField(CharField):
+
     def __init__(self, max_length=None, *args, **kwargs):
         super(PhoneField, self).__init__(max_length=11, *args, **kwargs)
 
@@ -16,6 +21,7 @@ class PhoneField(CharField):
 
 
 class PassportField(CharField):
+
     def __init__(self, max_length=None, *args, **kwargs):
         super(PassportField, self).__init__(max_length=10, *args, **kwargs)
 
@@ -23,3 +29,14 @@ class PassportField(CharField):
         if value is not None:
             value = re.sub('[^0-9]', '', value)
         return super(PassportField, self).to_python(value)
+
+
+class DateTimeISOField(DateTimeField):
+
+    """
+        It does not depend on input_formats parameter,
+        because strptime does not need it while parsing.
+    """
+
+    def strptime(self, value, format):
+        return dateutil.parser.parse(force_str(value))

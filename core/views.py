@@ -64,10 +64,16 @@ class StatusMixin:
 
 class ResponseMixin(StatusMixin, ContextMixin):
 
-    def response(self, request, template, context, get_context_flag=True, **kwargs):
+    def response(self, request, template, context, **kwargs):
         context.update({'request': request})
-        if get_context_flag:
-            context = self.get_context_data(**context)
+        return render(request, template, context, **kwargs)
+
+    def raw_response(self, raw_text, **kwargs):
+        return HttpResponse(raw_text, **kwargs)
+
+    def response2(self, request, template, context, **kwargs):
+        context.update({'request': request})
+        context = self.get_context_data(**context)
         return render(request, template, context, **kwargs)
 
     def redirect(self, *args, **kwargs):
