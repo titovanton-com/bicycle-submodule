@@ -1,4 +1,4 @@
-# coding: UTF-8
+# -*- coding: utf-8 -*-
 """
 .. moduleauthor:: Titov Anton (mail@titovanton.com)
 """

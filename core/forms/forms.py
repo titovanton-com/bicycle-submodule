@@ -1,4 +1,4 @@
-# coding: UTF-8
+# -*- coding: utf-8 -*-
 
 from django import forms
 from django.conf import settings
@@ -32,6 +32,7 @@ def get_captcha_form():
             raise CaptchaFormNotAvailable('RECAPTCHA_THEME must be int and is'
                                           'an index of the following tuple'
                                           '(\'red\', \'white\', \'blackglass\', \'clean\')')
+
         class ReCaptchaForm(forms.Form):
             captcha = ReCaptchaField(public_key=settings.RECAPTCHA_PUBLIC_KEY,
                                      private_key=settings.RECAPTCHA_PRIVATE_KEY,
@@ -43,6 +44,7 @@ def get_captcha_form():
             import supercaptcha
         except ImportError:
             raise CaptchaFormNotAvailable('Unable to import the supercaptcha')
+
         class SuperCaptchaForm(forms.Form):
             captcha = supercaptcha.CaptchaField()
         return SuperCaptchaForm
