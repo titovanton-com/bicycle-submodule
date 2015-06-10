@@ -31,7 +31,7 @@ class PassportField(CharField):
         return super(PassportField, self).to_python(value)
 
 
-class DateTimeISOField(DateTimeField):
+class SmartDateTimeField(DateTimeField):
 
     """
         It does not depend on input_formats parameter,

@@ -2,9 +2,12 @@
 """
 .. moduleauthor:: Titov Anton (mail@titovanton.com)
 """
+from datetime import datetime
 import inspect
 import os
+import pytz
 import re
+
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,7 +18,6 @@ from django.db import models
 from django.db.models.loading import get_model
 from django.http import Http404
 from django.utils.html import escape
-from django.utils.timezone import now
 from sorl.thumbnail import get_thumbnail
 from fields import ExifLessImageField as ImageField
 
@@ -319,21 +321,26 @@ class PublishedManager(PublishedManager):
 
 
 class ChronologyModel(models.Model):
-    created = models.DateTimeField(verbose_name=u'Создан', auto_now_add=True)
-    updated = models.DateTimeField(verbose_name=u'Обновлен', auto_now=True)
+    created = models.DateTimeField(verbose_name=u'Создан')
+    updated = models.DateTimeField(verbose_name=u'Обновлен')
 
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         self.created = now()
-    #     self.updated = now()
-    #     super(ChronologyModel, self).save()
+    def save(self, *args, **kwargs):
 
-    # def full_clean(self, exclude=None, validate_unique=True):
-    #     if exclude is not None:
-    #         exclude += ['created', 'updated']
-    #     else:
-    #         exclude = ['created', 'updated']
-    #     super(ChronologyModel, self).full_clean(exclude, validate_unique)
+        if not self.id:
+            self.created = datetime.now(pytz.timezone(settings.TIME_ZONE))
+
+        self.updated = datetime.now(pytz.timezone(settings.TIME_ZONE))
+
+        super(ChronologyModel, self).save()
+
+    def full_clean(self, exclude=None, validate_unique=True):
+
+        if exclude is not None:
+            exclude += ['created', 'updated']
+        else:
+            exclude = ['created', 'updated']
+
+        super(ChronologyModel, self).full_clean(exclude, validate_unique)
 
     class Meta:
         ordering = ['-created', ]

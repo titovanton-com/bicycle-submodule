@@ -90,7 +90,7 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
 
     def get_widget(self, request, *args, **kwargs):
         c = {'object': self._get_cart(request)}
-        return self.response(request, self.widget_template, c, False)
+        return self.response(request, self.widget_template, c)
 
 
 class YandexMoneyViewBase(ResponseMixin, JsonResponseMixin, ToDoView):
