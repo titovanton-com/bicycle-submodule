@@ -1,7 +1,9 @@
 # coding: UTF-8
 
+import datetime
 import hashlib
 import os
+import random
 import re
 
 from django.conf import settings
@@ -122,3 +124,39 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def random_datetime(start, end=None):
+    """
+    Rendom datetime object based on 2 dates
+
+    :param start: start date
+    :type start: string with valide format, for example ISO 8601
+
+    :param end: end date, defaults to None
+    :type end: string with valide format, for example ISO 8601
+
+    - Gets 2 dates and returns a random datetime object with time zone based on settings.py
+    - If end is None then now is used
+    - Required: pytz, dateutil
+    """
+    import pytz
+    import dateutil.parser
+
+    tz = pytz.timezone(settings.TIME_ZONE)
+    sdt = dateutil.parser.parse(start)
+
+    if end is None:
+        edt = datetime.datetime.now(tz)
+    else:
+        edt = dateutil.parser.parse(end)
+
+    delta = edt - sdt
+    random_seconds = int(round(delta.total_seconds() * random.random()))
+
+    random_date = sdt + datetime.timedelta(0, random_seconds)
+
+    try:
+        return tz.localize(random_date)
+    except ValueError:
+        return random_date
