@@ -43,7 +43,7 @@ def test_status(urls_list):
         else:
             continue
 
-        r = m(url, data=json.dumps(params), headers=headers)
+        r = m(url, params=params, headers=headers)
         print method, url, params
         output = u'OK: %s, status_code: %s, is_permanent_redirect: %s, is_redirect: %s'
         print output % (

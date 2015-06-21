@@ -57,14 +57,17 @@ class DynamicMethodsMixin(object):
 
         def __call__(self, *args):
             args = args or self.__args
+
             return self.__method(self.__this, *args)
 
     def __getattribute__(self, name):
+
         try:
             spr = super(DynamicMethodsMixin, self).__getattribute__(name)
         except AttributeError:
             msg = '\'%s\' object has no attribute \'%s\'' % (
                 self.__class__.__name__, name)
+
             try:
                 l = name.split('__')
                 method_name, args = l[0], l[1:]
@@ -73,10 +76,12 @@ class DynamicMethodsMixin(object):
             else:
                 methods = dict(
                     inspect.getmembers(self.__class__, inspect.ismethod))
+
                 if method_name in methods:
                     return self.__MethodWrapper(self, methods[method_name], *args)
                 else:
                     raise AttributeError(msg)
+
         else:
             return spr
 
@@ -87,8 +92,10 @@ class ClassNameMixin(object):
         return self._meta.app_label
 
     def class_name(self):
+
         if self._meta.proxy:
             return self._meta.proxy_for_model.__name__
+
         return self.__class__.__name__
 
 
@@ -120,6 +127,7 @@ class EditLinkMixin(ClassNameMixin):
 class UnicodeTitleSlugMixin(ClassNameMixin):
 
     def __unicode__(self):
+
         if settings.DEBUG and self.slug or not self.title and self.slug:
             return u'%s' % self.slug
         elif self.title:
@@ -141,6 +149,7 @@ class TitleModel(ClassNameMixin, models.Model):
 class UnicodeSlugMixin(ClassNameMixin):
 
     def __unicode__(self):
+
         if self.slug:
             return u'%s: %s' % (self.class_name(), self.slug)
         else:
@@ -164,10 +173,12 @@ class SlugBlankModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
                             verbose_name=u'Краткое названия для URL')
 
     def save(self, *args, **kwargs):
+
         if not self.slug:
             self.slug = valid_slug(self.title)
         else:
             self.slug = valid_slug(self.slug)
+
         super(SlugBlankModel, self).save()
 
     class Meta:
@@ -185,33 +196,42 @@ class ImgSeoModel(models.Model):
 
 
 def thumbnail_admin(self, img, pk):
+
     if img.name:
         image_path = os.path.join(settings.MEDIA_ROOT, str(img))
+
         try:
             thumbnail = get_thumbnail(image_path, '100x100', quality=80)
         except IOError:
             url = u'http://dummyimage.com/100x100/e0e0e0/de0000.jpg&text=IOError'
         else:
             url = thumbnail.url
+
     else:
         url = u'http://dummyimage.com/100x100/e0e0e0/545454.jpg&text=dummy'
+
     return u'<a href="%s/"><img src="%s"/></a>' % (pk, url)
 
 
 def image_html(self, img):
+
     if img.name:
         code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
                (self.image_alt, self.image_title, img.url)
+
         return escape(code)
     else:
         url = u'http://dummyimage.com/100x100/e0e0e0/545454.jpg&text=dummy'
+
         return u'<img src="%s"/>' % url
 
 
 class CoverMixin(models.Model):
 
     def cover_admin(self):
+
         return thumbnail_admin(self, self.cover, self.pk)
+
     cover_admin.short_description = u'Обложка'
     cover_admin.allow_tags = True
 
@@ -244,6 +264,7 @@ class PublishedQuerySet(models.query.QuerySet):
 
     def get_published_or_404(self, **kwargs):
         kwargs['published'] = True
+
         try:
             return self.get(**kwargs)
         except self.model.DoesNotExist:
@@ -274,6 +295,7 @@ class PublishedManager(models.Manager):
 
     def get_published_or_404(self, **kwargs):
         qs = self.get_queryset()
+
         try:
             return qs.get_published(**kwargs)
         except qs.model.DoesNotExist:
@@ -381,6 +403,7 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
 
     def thumbnail_admin(self):
         return thumbnail_admin(self, self.image, self.pk)
+
     thumbnail_admin.short_description = u'Thumbnail'
     thumbnail_admin.allow_tags = True
 
@@ -388,10 +411,12 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
         return image_html(self, self.image)
 
     def image_py(self):
+
         if len(self.image):
             code = u'<img class="img-responsive" alt="%s" title="%s" \
                      src="{{ MEDIA_URL }}%s"/>' % \
                    (self.image_alt, self.image_title, self.image.name)
+
             return escape(code)
         else:
             return u'Изображения нет'
@@ -412,9 +437,11 @@ class CategoryBase(SlugModel, CoverModel, SeoModel):
     def get_breadcrumbs(self):
         breadcrumbs = [(self.title,)]
         tmp = self
+
         while tmp.parent is not None:
             tmp = tmp.parent
             breadcrumbs = [(tmp.get_url(), tmp.title)] + breadcrumbs
+
         return [('/', u'Главная')] + breadcrumbs
 
     def get_branch(self):
@@ -534,6 +561,7 @@ class ParseMediaCacheMixin(object):
     @classmethod
     def clear_cached_tag(cls, sender, **kwargs):
         obj = kwargs['instance']
+
         if obj.pk:
             old_obj = cls.objects.get(pk=obj.pk)
             key = cls.LOCAL_CACHE_KEY_PREFIX + cls.media_tag(old_obj)[3:-3]
@@ -556,14 +584,17 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
         return u'[[ %s.%s:%s:src ]]' % (self.app_label(), self.class_name(), self.slug)
 
     def to_html(self):
+
         if len(self.image):
             code = u'<img class="img-responsive" alt="%s" title="%s" src="%s"/>' % \
                    (self.image_alt, self.image_title, self.image.url)
+
             return code
         else:
             return ''
 
     def to_src(self):
+
         if len(self.image):
             return self.image.url
         else:
