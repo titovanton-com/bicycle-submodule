@@ -81,7 +81,7 @@ class OrderModelBase(OrderMixin, models.Model):
 class OrderItemModelBase(CartItemMixin, TitleModel):
     link = models.TextField()
     price = models.PositiveIntegerField()
-    discount = models.PositiveIntegerField()
+    discount = models.PositiveIntegerField(default=0)
     qty = models.PositiveIntegerField()
 
     class Meta:
