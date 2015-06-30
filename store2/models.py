@@ -79,10 +79,10 @@ class OrderModelBase(OrderMixin, models.Model):
 
 
 class OrderItemModelBase(CartItemMixin, TitleModel):
-    link = models.TextField()
-    price = models.PositiveIntegerField()
-    discount = models.PositiveIntegerField(default=0)
-    qty = models.PositiveIntegerField()
+    link = models.TextField(verbose_name=u'Ссылка на товар')
+    price = models.PositiveIntegerField(verbose_name=u'Цена')
+    discount = models.PositiveIntegerField(default=0, verbose_name=u'Скидка')
+    qty = models.PositiveIntegerField(verbose_name=u'Количество')
 
     class Meta:
         abstract = True
