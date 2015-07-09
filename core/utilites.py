@@ -93,6 +93,7 @@ def valid_file_name(word):
     patrn = r'[^a-zA-Z0-9_.()-]'
     repl = '-'
     fingerprint = md5_random_string()  # 32
+
     return u'%s-%s' % (fingerprint, re.sub(patrn, repl, word)[-20:])
 
 
@@ -102,7 +103,6 @@ def valid_slug(word):
 
 @deconstructible
 class UploadToDir(object):
-    path = "students/{0}/{1}{2}"
 
     def __init__(self, suffix=None):
         self.suffix = suffix
@@ -114,15 +114,18 @@ class UploadToDir(object):
             root_dir += '_' + self.suffix
 
         file_name = valid_file_name(filename)
+
         return os.path.join(root_dir, file_name[0:2], file_name[2:4], file_name)
 
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
+
     return ip
 
 
