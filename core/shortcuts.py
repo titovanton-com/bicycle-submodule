@@ -1,13 +1,16 @@
 # coding: UTF-8
 
+import datetime
+
 from django.conf import settings
-from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator
 
 
 def get_page(query_set, request, limit=12):
     pager = Paginator(query_set, limit)
+
     try:
         page = pager.page(request.GET.get('page', 1))
     except PageNotAnInteger:
@@ -62,3 +65,27 @@ def session_start(request):
         request.session['session start'] = True
         request.session.save()
     return request.session.session_key
+
+
+def tz_now(format=None):
+    import pytz
+
+    if format is not None:
+        return datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)).strftime(format)
+    else:
+        return datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))
+
+
+def tz_iso_now():
+    import pytz
+
+    return datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)).isoformat()
+
+
+def localize_date(d):
+    import pytz
+
+    try:
+        return pytz.timezone(settings.TIME_ZONE).localize(d)
+    except ValueError:  # already localized
+        return d
