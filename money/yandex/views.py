@@ -106,7 +106,7 @@ class YandexMoneyBase(ResponseMixin, ToDoView):
             return self.hook_success(request, form)
 
     def get_fail(self, request):
-        form = self.fail_or_success_form(request.GET)
+        form = self.fail_or_success_form(request.POST)
 
         if form.is_valid():
             return self.hook_fail(request, form)
