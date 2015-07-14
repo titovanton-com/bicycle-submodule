@@ -113,3 +113,7 @@ class TransferNoticeForm(FormBase):
             raise forms.ValidationError('Invalid action', code='invalid')
 
         return self.cleaned_data['action']
+
+
+class FailOrSuccessForm(forms.Form):
+    customerNumber = forms.CharField(max_length=64)

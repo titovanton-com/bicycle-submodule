@@ -98,7 +98,13 @@ class YandexMoneyBase(ResponseMixin, ToDoView):
                                   self.hook_transfer_notice, u'paymentAvisoResponse')
 
     def get_success(self, request):
-        raise NotImplementedError()
+        form = form_class(request.POST)
+
+        if form.is_valid():
+            return self.hook_success(request, form)
 
     def get_fail(self, request):
-        raise NotImplementedError()
+        form = form_class(request.POST)
+
+        if form.is_valid():
+            return self.hook_fail(request, form)
