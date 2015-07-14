@@ -13,6 +13,7 @@ from bicycle.core.views import ResponseMixin
 from bicycle.core.views import ToDoView
 
 from forms import CheckingOrderForm
+from forms import FailOrSuccessForm
 from forms import TransferNoticeForm
 
 
@@ -39,6 +40,7 @@ class YandexMoneyBase(ResponseMixin, ToDoView):
 
     checking_order_form = CheckingOrderForm
     transfer_notice_form = TransferNoticeForm
+    fail_or_success_form = FailOrSuccessForm
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -98,13 +100,13 @@ class YandexMoneyBase(ResponseMixin, ToDoView):
                                   self.hook_transfer_notice, u'paymentAvisoResponse')
 
     def get_success(self, request):
-        form = form_class(request.POST)
+        form = self.fail_or_success_form(request.GET)
 
         if form.is_valid():
             return self.hook_success(request, form)
 
     def get_fail(self, request):
-        form = form_class(request.POST)
+        form = self.fail_or_success_form(request.GET)
 
         if form.is_valid():
             return self.hook_fail(request, form)
