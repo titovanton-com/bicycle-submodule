@@ -116,4 +116,4 @@ class TransferNoticeForm(FormBase):
 
 
 class FailOrSuccessForm(forms.Form):
-    customerNumber = forms.CharField(max_length=64)
+    order_number = forms.CharField(max_length=64)
