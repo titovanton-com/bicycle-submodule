@@ -12,11 +12,11 @@ def do_page_list(page, quantity):
     if page.paginator.num_pages == 1:
         return None
 
-    page_buttons = [n for n in \
-                    range(page.number - quantity, page.number + quantity + 1) \
+    page_buttons = [n for n in
+                    range(page.number - quantity, page.number + quantity + 1)
                     if n >= 1 and n <= page.paginator.num_pages]
 
-    amount = quantity*2 + 2
+    amount = quantity * 2 + 2
     amount = amount > page.paginator.num_pages and page.paginator.num_pages
     while page_buttons[0] == 1 and len(page_buttons) < amount:
         if page_buttons[-1] + 1 <= page.paginator.num_pages:
@@ -38,7 +38,9 @@ def do_page_list(page, quantity):
 
     return page_buttons
 
+
 class PagerNode(template.Node):
+
     def __init__(self, nodelist, page, quantity, var_name):
         self.nodelist = nodelist
         self.page = page

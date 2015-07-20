@@ -8,7 +8,6 @@ import os
 import pytz
 import re
 
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -18,11 +17,14 @@ from django.db import models
 from django.db.models.loading import get_model
 from django.http import Http404
 from django.utils.html import escape
+from django.utils.translation import ugettext as _
+
 from sorl.thumbnail import get_thumbnail
-from fields import ExifLessImageField as ImageField
 
 from bicycle.core.utilites import UploadToDir
 from bicycle.core.utilites import valid_slug
+
+from fields import ExifLessImageField as ImageField
 
 
 DB_MAX_INT = 2147483647
@@ -137,7 +139,7 @@ class UnicodeTitleSlugMixin(ClassNameMixin):
 
 
 class TitleModel(ClassNameMixin, models.Model):
-    title = models.CharField(max_length=256, verbose_name=u'Название')
+    title = models.CharField(max_length=256, verbose_name=_(u'Title'))
 
     def __unicode__(self):
         return u'%s: %s' % (self.class_name(), self.title)
@@ -158,7 +160,7 @@ class UnicodeSlugMixin(ClassNameMixin):
 
 class SlugModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
     slug = models.SlugField(max_length=256, unique=True,
-                            verbose_name=u'Краткое названия для URL')
+                            verbose_name=_(u'Short slug for URL'))
 
     def save(self, *args, **kwargs):
         self.slug = valid_slug(self.slug)
@@ -170,7 +172,7 @@ class SlugModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
 
 class SlugBlankModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
     slug = models.SlugField(max_length=256, unique=True, blank=True, null=True,
-                            verbose_name=u'Краткое названия для URL')
+                            verbose_name=_(u'Short slug for URL'))
 
     def save(self, *args, **kwargs):
 
@@ -187,9 +189,9 @@ class SlugBlankModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
 
 class ImgSeoModel(models.Model):
     image_title = models.CharField(max_length=256, blank=True,
-                                   verbose_name=u'Атрибут изображения title')
+                                   verbose_name=_(u'Attribute title of the tag <img/>'))
     image_alt = models.CharField(max_length=256, blank=True,
-                                 verbose_name=u'Атрибут изображения alt')
+                                 verbose_name=_(u'Attribute alt of the tag <img/>'))
 
     class Meta:
         abstract = True
@@ -240,14 +242,14 @@ class CoverMixin(models.Model):
 
 
 class CoverModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(upload_to=UploadToDir('cover'), verbose_name=u'Обложка')
+    cover = ImageField(upload_to=UploadToDir('cover'), verbose_name=_(u'Cover'))
 
     class Meta:
         abstract = True
 
 
 class CoverBlankModel(CoverMixin, ImgSeoModel):
-    cover = ImageField(blank=True, upload_to=UploadToDir('cover'), verbose_name=u'Обложка')
+    cover = ImageField(blank=True, upload_to=UploadToDir('cover'), verbose_name=_(u'Cover'))
 
     # def save(self, *args, **kwargs):
     #     assert False
@@ -343,8 +345,8 @@ class PublishedManager(PublishedManager):
 
 
 class ChronologyModel(models.Model):
-    created = models.DateTimeField(verbose_name=u'Создан')
-    updated = models.DateTimeField(verbose_name=u'Обновлен')
+    created = models.DateTimeField(verbose_name=_(u'Created'))
+    updated = models.DateTimeField(verbose_name=_(u'Updated'))
 
     def save(self, *args, **kwargs):
 
@@ -370,7 +372,7 @@ class ChronologyModel(models.Model):
 
 
 class PublishedModel(models.Model):
-    published = models.BooleanField(verbose_name=u'Опубликован', default=True)
+    published = models.BooleanField(verbose_name=_(u'Flag as published'), default=True)
 
     objects = PublishedManager()
 
@@ -379,7 +381,7 @@ class PublishedModel(models.Model):
 
 
 class PositionModel(models.Model):
-    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=u'Порядок в списке')
+    position = models.PositiveIntegerField(default=DB_MAX_INT, verbose_name=_(u'Order in a list'))
 
     class Meta:
         ordering = ['position', '-pk']
@@ -388,18 +390,18 @@ class PositionModel(models.Model):
 
 class SeoModel(models.Model):
     html_title = models.CharField(max_length=256, blank=True,
-                                  verbose_name=u'Название вкладки')
+                                  verbose_name=_(u'Tab title'))
     html_keywords = models.CharField(max_length=256, blank=True,
-                                     verbose_name=u'Ключевики для поисковых систем')
+                                     verbose_name=_(u'Keywords for search systems'))
     html_description = models.TextField(blank=True,
-                                        verbose_name=u'Описание для поисковых систем')
+                                        verbose_name=_(u'Description for search systems'))
 
     class Meta:
         abstract = True
 
 
 class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
-    image = ImageField(upload_to=UploadToDir(), verbose_name=u'Изображение')
+    image = ImageField(upload_to=UploadToDir(), verbose_name=_(u'Image'))
 
     def thumbnail_admin(self):
         return thumbnail_admin(self, self.image, self.pk)
@@ -426,13 +428,13 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
 
     class Meta:
         ordering = ['position', '-pk']
-        verbose_name_plural = u'Изображения'
+        verbose_name_plural = _(u'Images')
         abstract = True
 
 
 class CategoryBase(SlugModel, CoverModel, SeoModel):
     parent = models.ForeignKey(
-        'self', null=True, blank=True, verbose_name=u'Предок')
+        'self', null=True, blank=True, verbose_name=_(u'Parent'))
 
     def get_breadcrumbs(self):
         breadcrumbs = [(self.title,)]
@@ -448,12 +450,12 @@ class CategoryBase(SlugModel, CoverModel, SeoModel):
         pass
 
     class Meta:
-        verbose_name_plural = u'Категории'
+        verbose_name_plural = _(u'Categories')
         abstract = True
 
 
 class CoupleBase(TitleModel):
-    value = models.CharField(max_length=256, verbose_name=u'Значение')
+    value = models.CharField(max_length=256, verbose_name=_(u'Value'))
 
     class Meta:
         abstract = True
@@ -575,7 +577,7 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
     """
 
     slug = models.SlugField(max_length=256, unique=True,
-                            verbose_name=u'Краткое названия для URL')
+                            verbose_name=_(u'Short slug for URL'))
 
     def media_tag(self):
         return u'[[ %s.%s:%s ]]' % (self.app_label(), self.class_name(), self.slug)
@@ -602,5 +604,5 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
 
     class Meta:
         ordering = ['position', '-pk']
-        verbose_name_plural = u'Изображения'
+        verbose_name_plural = _(u'Images')
         abstract = True

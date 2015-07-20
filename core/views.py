@@ -66,6 +66,7 @@ class ResponseMixin(StatusMixin, ContextMixin):
 
     def response(self, request, template, context, **kwargs):
         context.update({'request': request})
+
         return render(request, template, context, **kwargs)
 
     def raw_response(self, raw_text, **kwargs):
@@ -74,6 +75,7 @@ class ResponseMixin(StatusMixin, ContextMixin):
     def response2(self, request, template, context, **kwargs):
         context.update({'request': request})
         context = self.get_context_data(**context)
+
         return render(request, template, context, **kwargs)
 
     def redirect(self, *args, **kwargs):
@@ -83,9 +85,12 @@ class ResponseMixin(StatusMixin, ContextMixin):
 class JsonResponseMixin(StatusMixin):
 
     def json_response(self, data=None, is_json=False, *args, **kwargs):
+
         if data is not None:
+
             if not is_json:
                 data = json.dumps(data)
+
             return HttpResponse(data, content_type='application/json')
         else:
             return HttpResponse(*args, content_type='application/json', **kwargs)
@@ -97,6 +102,7 @@ class FileResponseMixin:
         response = HttpResponse(mimetype='application/force-download')
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         response['X-Accel-Redirect'] = file_url
+
         return response
 
 
@@ -112,8 +118,10 @@ class FilterMixin:
     queryset = None
 
     def get_queryset(self):
+
         if self.queryset is None and getattr(self, 'model', False):
             return self.model.objects.all()
+
         return self.queryset
 
     class FilterError(Exception):
@@ -133,10 +141,13 @@ class PageFilterMixin(FilterMixin):
     default_page_size = '6x4'
 
     def apply_filter(self, request):
+
         if self.paginate:
+
             try:
                 page_num = int(request.GET.get(self.page_kwarg, 1))
             except ValueError:
+
                 if self.allow_empty:
                     page_num = 1
                 else:
@@ -146,6 +157,7 @@ class PageFilterMixin(FilterMixin):
                 size = request.GET.get(self.page_size_kwarg, self.default_page_size)
                 rows, columns = [int(i) for i in size.split('x')]
             except ValueError:
+
                 if self.allow_empty:
                     rows, columns = [int(i) for i in self.default_page_size.split('x')]
                 else:
@@ -156,10 +168,12 @@ class PageFilterMixin(FilterMixin):
             try:
                 page = pager.page(page_num)
             except EmptyPage:
+
                 if self.allow_empty:
                     page = pager.page(pager.num_pages)
                 else:
                     raise Http404
+
             # self.queryset = page.object_list
             self.page = page
             self.rows = rows

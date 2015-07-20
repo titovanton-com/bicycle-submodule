@@ -10,6 +10,7 @@ register = template.Library()
 
 
 class AddParameter(template.Node):
+
     def __init__(self, kwargs):
         self.kwargs = kwargs
 
@@ -19,8 +20,8 @@ class AddParameter(template.Node):
         for key in self.kwargs:
             value = self.kwargs[key]
             get[key] = isinstance(value, FilterExpression) \
-                       and value.resolve(context, True) \
-                       or value
+                and value.resolve(context, True) \
+                or value
         return '?%s' % get.urlencode()
 
 
@@ -47,7 +48,7 @@ def addurlparameter(parser, token):
         <a href="{% addurlparameter "p"="1" %}">blabla bla</a>
         <a href="{% addurlparameter "hey"=variable "param"="1" %}">omnomn omn</a>
     """
-    
+
     try:
         bits = token.contents.split(' ')
         tag_name = bits.pop(0)
@@ -59,6 +60,7 @@ def addurlparameter(parser, token):
 
 
 class RemoveParameter(template.Node):
+
     def __init__(self, args):
         self.args = args
 
