@@ -37,8 +37,7 @@ def _send_email_job(subject, from_email, to, tpl, context):
 
 
 def send_email_rq(subject, from_email, to, tpl='email.html', context={}):
-    """
-        Sending HTML E-Mail via Django-rq
+    """Sending HTML E-Mail via Django-rq
 
         Required:
             redis-server
