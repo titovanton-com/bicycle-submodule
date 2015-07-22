@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.utils.translation import ugettext as _
 
 
 class SiteMapModel(models.Model):
     PRIORITY_CHOICES = (
-        (-1, u'По умолчанию'),
+        (-1, _(u'Default value')),
         (0.0, 0.0),
         (0.1, 0.1),
         (0.2, 0.2),
@@ -20,7 +21,7 @@ class SiteMapModel(models.Model):
     )
 
     priority = models.FloatField(default=-1, choices=PRIORITY_CHOICES,
-                                 verbose_name=u'Приоритет sitemap.xml')
+                                 verbose_name=_(u'Priority in sitemap.xml'))
 
     default_priority = 0.5
 
