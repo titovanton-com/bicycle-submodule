@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext as _
 
 
 def false_icon():
@@ -22,17 +23,20 @@ class MetaSeoMixin:
 
 def make_published(modeladmin, request, queryset):
     rows_updated = queryset.update(published=True)
-    modeladmin.message_user(request,
-        "%s объект(ов) успешно опубликован(ы)." % rows_updated)
-make_published.short_description = u'Опубликовать'
+    modeladmin.message_user(
+        request,
+        _(u'%s object(s) successfull published.') % rows_updated)
 
 
 def make_unpublished(modeladmin, request, queryset):
     rows_updated = queryset.update(published=False)
-    modeladmin.message_user(request,
-        "%s объект(ов) успешно снят(ы) с публикации." % rows_updated)
-make_unpublished.short_description = u'Убрать флаг публикации'
+    modeladmin.message_user(
+        request,
+        _(u'%s object(s) successfull unpublished.') % rows_updated)
 
+
+make_published.short_description = _(u'Publish')
+make_unpublished.short_description = _(u'Unpublish')
 admin.site.add_action(make_published)
 admin.site.add_action(make_unpublished)
 
@@ -54,6 +58,7 @@ class MediaTranslationMeta(type):
 
 
 class RedirectOnSaveMixin:
+
     def response_add(self, request, obj, post_url_continue=None):
         return HttpResponseRedirect(obj.get_url())
 

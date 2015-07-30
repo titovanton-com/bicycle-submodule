@@ -421,7 +421,7 @@ class ImageBase(EditLinkMixin, ImgSeoModel, PositionModel):
 
             return escape(code)
         else:
-            return u'Изображения нет'
+            return _(u'No image')
 
     def __unicode__(self):
         return u'%s with pk: %s' % (self.class_name(), self.pk)
