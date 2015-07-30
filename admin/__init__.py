@@ -37,8 +37,8 @@ def make_unpublished(modeladmin, request, queryset):
 
 make_published.short_description = _(u'Publish')
 make_unpublished.short_description = _(u'Unpublish')
-admin.site.add_action(make_published)
-admin.site.add_action(make_unpublished)
+# admin.site.add_action(make_published)
+# admin.site.add_action(make_unpublished)
 
 
 class MediaTranslationMeta(type):
