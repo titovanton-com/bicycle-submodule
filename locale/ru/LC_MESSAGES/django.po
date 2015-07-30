@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-30 14:33+0200\n"
+"POT-Creation-Date: 2015-07-30 15:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,16 +22,16 @@ msgstr ""
 #: bicycle/admin/__init__.py:28
 #, python-format
 msgid "%s object(s) successfull published."
-msgstr "объект(ов) успешно опубликован(ы)."
+msgstr "%s объект(ов) успешно опубликован(ы)."
 
-#: bicycle/admin/__init__.py:29
-msgid "Publish"
-msgstr "Опубликовать"
-
-#: bicycle/admin/__init__.py:38
+#: bicycle/admin/__init__.py:35
 #, python-format
 msgid "%s object(s) successfull unpublished."
 msgstr "%s объект(ов) успешно снят(ы) с публикации."
+
+#: bicycle/admin/__init__.py:38
+msgid "Publish"
+msgstr "Опубликовать"
 
 #: bicycle/admin/__init__.py:39
 msgid "Unpublish"
