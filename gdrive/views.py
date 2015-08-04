@@ -8,11 +8,11 @@ from oauth2client import client
 
 
 def flow_arguments():
-    return {
-        'client_secret': getattr(settings, 'GDRIVE_OAUTH_SECRET', 'client_secrets.json'),
-        'scope': getattr(settings, 'GDRIVE_OAUTH_SCOPE', 'https://www.googleapis.com/auth/drive'),
-        'redirect_uri': getattr(settings, 'GDRIVE_OAUTH_REDIRECT_URI', '/gdrive/oauth/'),
-    }
+    return client.flow_from_clientsecrets(
+        getattr(settings, 'GDRIVE_OAUTH_SECRETS', 'client_secrets.json'),
+        scope=getattr(settings, 'GDRIVE_OAUTH_SCOPE', 'https://www.googleapis.com/auth/drive'),
+        redirect_uri=getattr(settings, 'GDRIVE_OAUTH_REDIRECT_URI', '/gdrive/oauth/')
+    )
 
 
 class OAuthMixin(object):
@@ -33,7 +33,7 @@ class OAuthMixin(object):
     def oauth(self, request):
 
         if 'gdrive_oauth_credentials' not in request.session:
-            flow = client.flow_from_clientsecrets(**flow_arguments())
+            flow = flow_arguments()
             request.session['gdrive_oauth_redirect_back'] = request.get_full_path()
             request.session.modified = True
             return flow.step1_get_authorize_url()
@@ -44,20 +44,12 @@ class OAuthMixin(object):
 class OAuthView(View):
 
     def get(self, request):
-        flow = client.flow_from_clientsecrets(**flow_arguments())
+        flow = flow_arguments()
 
         if 'code' in request.GET:
             auth_code = request.GET['code']
             credentials = flow.step2_exchange(auth_code)
             request.session['gdrive_oauth_credentials'] = credentials.to_json()
-
-            if 'gdrive_oauth_redirect_back' in request.session
-                redirect_back = request.session['gdrive_oauth_redirect_back']
-                del request.session['gdrive_oauth_redirect_back']
-                request.session.modified = True
-                return redirect(redirect_back)
-            else:
-                return redirect('/')
 
         elif 'error' in request.GET:
             request.session['gdrive_oauth_error'] = request.GET['error']
@@ -66,3 +58,11 @@ class OAuthView(View):
         else:
             auth_uri = flow.step1_get_authorize_url()
             return redirect(auth_uri)
+
+        if 'gdrive_oauth_redirect_back' in request.session:
+            redirect_back = request.session['gdrive_oauth_redirect_back']
+            del request.session['gdrive_oauth_redirect_back']
+            request.session.modified = True
+            return redirect(redirect_back)
+        else:
+            return redirect('/')
