@@ -17,17 +17,28 @@ def flow_arguments():
 
 class OAuthMixin(object):
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.method.lower() in self.http_method_names:
+            oauth_uri = self.oauth(request)
+
+            if oauth_uri:
+                return redirect(oauth_uri)
+            else:
+                return super(OAuthMixin, self).dispatch(request, *args, **kwargs)
+
+        else:
+            return self.http_method_not_allowed(request, *args, **kwargs)
+
+    def oauth(self, request):
 
         if 'gdrive_oauth_credentials' not in request.session:
             flow = client.flow_from_clientsecrets(**flow_arguments())
-            auth_uri = flow.step1_get_authorize_url()
             request.session['gdrive_oauth_redirect_back'] = request.get_full_path()
             request.session.modified = True
-            return redirect(auth_uri)
-
+            return flow.step1_get_authorize_url()
         else:
-            return super(OAuthMixin, self).get(self, request)
+            return False
 
 
 class OAuthView(View):
