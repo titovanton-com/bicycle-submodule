@@ -16,9 +16,11 @@ from bicycle.core.shortcuts import localize_date
 from bicycle.core.views import JsonResponseMixin
 from bicycle.core.views import ResponseMixin
 
+from __init__ import GDoc
 from __init__ import GDrive
 from __init__ import GError
 from __init__ import GFactory
+from __init__ import GFolder
 from __init__ import GSheet
 
 
@@ -117,9 +119,12 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         return self.json_response(self.errors)
 
     def __factory_test(self):
-        item = {'mimeType': 'application/vnd.google-apps.spreadsheet'}
-        obj = GFactory(item)
-        assert isinstance(obj, GSheet), 'Factory test failed'
+        obj = GFactory({'mimeType': u'application/vnd.google-apps.document'})
+        assert isinstance(obj, GDoc), 'Factory test failed on GDoc'
+        obj = GFactory({'mimeType': u'application/vnd.google-apps.spreadsheet'})
+        assert isinstance(obj, GSheet), 'Factory test failed on GSheet'
+        obj = GFactory({'mimeType': u'application/vnd.google-apps.folder'})
+        assert isinstance(obj, GFolder), 'Factory test failed on GFolder'
 
     def __insert_test(self):
         file_to_insert = GSheet({'title': 'test'})
