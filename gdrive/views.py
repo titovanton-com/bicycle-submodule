@@ -20,6 +20,7 @@ from __init__ import GDoc
 from __init__ import GDrive
 from __init__ import GError
 from __init__ import GFactory
+from __init__ import GFile
 from __init__ import GFolder
 from __init__ import GSheet
 
@@ -125,6 +126,8 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         assert isinstance(obj, GSheet), 'Factory test failed on GSheet'
         obj = GFactory({'mimeType': u'application/vnd.google-apps.folder'})
         assert isinstance(obj, GFolder), 'Factory test failed on GFolder'
+        obj = GFactory({'mimeType': u'application/vnd.google-apps.random'})
+        assert isinstance(obj, GFile), 'Factory test failed on GFile'
 
     def __insert_test(self):
         file_to_insert = GSheet({'title': 'test'})
