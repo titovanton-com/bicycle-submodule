@@ -120,18 +120,18 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         return self.json_response(self.errors)
 
     def __factory_test(self):
-        obj = GFactory({'mimeType': u'application/vnd.google-apps.document'})
+        obj = GFactory(self.gdrive, {'mimeType': u'application/vnd.google-apps.document'})
         assert isinstance(obj, GDoc), 'Factory test failed on GDoc'
-        obj = GFactory({'mimeType': u'application/vnd.google-apps.spreadsheet'})
+        obj = GFactory(self.gdrive, {'mimeType': u'application/vnd.google-apps.spreadsheet'})
         assert isinstance(obj, GSheet), 'Factory test failed on GSheet'
-        obj = GFactory({'mimeType': u'application/vnd.google-apps.folder'})
+        obj = GFactory(self.gdrive, {'mimeType': u'application/vnd.google-apps.folder'})
         assert isinstance(obj, GFolder), 'Factory test failed on GFolder'
-        obj = GFactory({'mimeType': u'application/vnd.google-apps.random'})
+        obj = GFactory(self.gdrive, {'mimeType': u'application/vnd.google-apps.random'})
         assert isinstance(obj, GFile), 'Factory test failed on GFile'
 
     def __insert_test(self):
-        file_to_insert = GSheet({'title': 'test'})
-        inserted = self.gdrive.save(file_to_insert)
+        file_to_insert = GSheet(self.gdrive, {'title': 'test'})
+        inserted = file_to_insert.save()
 
         msg = 'Inserted file is not instance of GSheet as expected'
         assert isinstance(inserted, GSheet), msg
@@ -142,7 +142,7 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
 
     def __update_test(self, file_to_update):
         file_to_update.description = 'hello world'
-        updated = self.gdrive.save(file_to_update)
+        updated = file_to_update.save()
 
         msg = 'Updated file and origin file are different'
         assert file_to_update == updated, msg
@@ -152,10 +152,14 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         return updated
 
     def __delete_test(self, file_to_delete):
-        deleted = self.gdrive.delete(file_to_delete)
+        deleted = file_to_delete.delete()
 
         msg = 'Delete test faild.'
         assert deleted == '', msg
+
+    def __worksheets_init_test(self, f):
+        msg = 'Worksheets init faild'
+        assert list(f.worksheets)[0].title == u'Лист1', msg
 
     def get(self, request):
         self.__prepare_tests(request)
@@ -164,8 +168,9 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
             self.__factory_test()
             file_inserted = self.__insert_test()
             file_updated = self.__update_test(file_inserted)
+            self.__worksheets_init_test(file_updated)
             self.__delete_test(file_updated)
         except AssertionError, error:
-            self.errors += [error]
+            self.errors += [str(error)]
 
         return self.__response()

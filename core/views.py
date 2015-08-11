@@ -96,6 +96,16 @@ class JsonResponseMixin(StatusMixin):
             return HttpResponse(*args, content_type='application/json', **kwargs)
 
 
+class XmlResponseMixin(StatusMixin):
+
+    def xml_response(self, data=None, *args, **kwargs):
+
+        if data is not None:
+            return HttpResponse(data, content_type='application/xml')
+        else:
+            return HttpResponse(*args, content_type='application/xml', **kwargs)
+
+
 class FileResponseMixin:
 
     def file_response(self, file_url, filename):
