@@ -14,7 +14,7 @@ from django.core.cache import cache
 from django.core.exceptions import FieldError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.http import Http404
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -522,7 +522,7 @@ class ParseMediaMixin(DynamicMethodsMixin):
             else:
 
                 try:
-                    model = get_model(d['model'])
+                    model = apps.get_model(d['model'])
                     obj = model.objects.get(slug=d['slug'])
 
                     if d['src'] is None:
