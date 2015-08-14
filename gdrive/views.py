@@ -157,9 +157,10 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         msg = 'Delete test faild.'
         assert deleted == '', msg
 
-    def __worksheets_init_test(self, f):
-        msg = 'Worksheets init faild'
-        assert list(f.worksheets)[0].title == u'Лист1', msg
+    def __get_worksheets_test(self, f):
+        assert f._worksheets is None, 'Lazy worksheets is not None'
+        assert f.get_worksheets()[0].title == u'Лист1', 'Worksheets init faild'
+        assert f._worksheets == f.get_worksheets(), 'Lazy retrieving does not work'
 
     def get(self, request):
         self.__prepare_tests(request)
@@ -168,7 +169,7 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
             self.__factory_test()
             file_inserted = self.__insert_test()
             file_updated = self.__update_test(file_inserted)
-            self.__worksheets_init_test(file_updated)
+            self.__get_worksheets_test(file_updated)
             self.__delete_test(file_updated)
         except AssertionError, error:
             self.errors += [str(error)]
