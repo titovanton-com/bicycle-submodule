@@ -86,7 +86,8 @@ def test_status(urls_list):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        """Test list of tuples(type, url, params) for HTTP status
+        """ Test list of tuples(type, url, params) for HTTP status
+            ------------------------------------------------------
 
         Outpute:
         ::

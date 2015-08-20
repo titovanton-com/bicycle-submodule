@@ -23,6 +23,7 @@ from __init__ import GFactory
 from __init__ import GFile
 from __init__ import GFolder
 from __init__ import GSheet
+from __init__ import GWorkSheet
 
 
 def flow_arguments():
@@ -162,6 +163,23 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
         assert f.get_worksheets()[0].title == u'Лист1', 'Worksheets init faild'
         assert f._worksheets == f.get_worksheets(), 'Lazy retrieving does not work'
 
+    def __save_worksheet_test(self, f):
+        w = GWorkSheet(f, {'title': 'test1', 'col_count': 10, 'row_count': 10})
+        w.save()
+        assert w._id is not None, 'Add worksheet faild'
+
+        w = GWorkSheet(f, {'title': 'test1', 'col_count': 10, 'row_count': 10})
+
+        try:
+            w.save()
+            assert False, 'Two GWorkSheets with the same title can not be saved'
+        except GError, e:
+            pass
+
+        # w.title = 'test2'
+        # w.col_count = 12
+        # w.save()
+
     def get(self, request):
         self.__prepare_tests(request)
 
@@ -170,7 +188,8 @@ class TestsView(OAuthMixin, JsonResponseMixin, View):
             file_inserted = self.__insert_test()
             file_updated = self.__update_test(file_inserted)
             self.__get_worksheets_test(file_updated)
-            self.__delete_test(file_updated)
+            self.__save_worksheet_test(file_updated)
+            # self.__delete_test(file_updated)
         except AssertionError, error:
             self.errors += [str(error)]
 

@@ -9,6 +9,11 @@ from apiclient.http import MediaFileUpload
 from oauth2client.client import OAuth2Credentials
 import httplib2
 
+from django.template import Context
+from django.template.loader import get_template
+
+from utils import get_xml_ns
+
 
 class IdMixin(object):
     __id = None
@@ -31,9 +36,12 @@ class GError(Exception):
 
 
 class GFileBase(IdMixin):
+    # TODO: tests with uploading a file
     mime_type = None
+    file_mime_type = None
     file_id = None
     filename = None
+    convert = False
     parents = []
     title = None
     description = None
@@ -43,14 +51,20 @@ class GFileBase(IdMixin):
         self._raw = item
         self._id = item.get('id', None)
         self.filename = item.get('filename', None)
+        self.convert = item.get('convert', False)
         self.parents = item.get('parents', [])
         self.title = item.get('title', None)
         self.description = item.get('description', None)
+
+        if self.mime_type is None:
+            self.mime_type = item.get('mimeType', None)
+            self.file_mime_type = item.get('fileMimeType', None)
 
     def get_raw(self):
         return self._raw
 
     def save(self):
+        # TODO: tests with uploading a file
         ''' Save a file to Google Drive
             ---------------------------
 
@@ -100,16 +114,25 @@ class GFileBase(IdMixin):
             Inserted file metadata if successful, None otherwise.
         '''
         self._validate()
+
+        if self.filename is not None:
+            media_body = MediaFileUpload(
+                self.filename, mimetype=self.file_mime_type, resumable=True)
+
         body = {
             'title': self.title,
             'description': self.description,
             'mimeType': self.mime_type,
             'parents': self.parents,
-            'mimeType': self.mime_type
         }
 
         try:
-            insert_file = self.gdrive.service.files().insert(body=body).execute()
+            params = {'body': body}
+
+            if self.filename is not None:
+                params['media_body'] = media_body
+
+            insert_file = self.gdrive.service.files().insert(**params).execute()
             return GFactory(self.gdrive, insert_file)
         except errors.HttpError, error:
             raise GError(error)
@@ -122,17 +145,25 @@ class GFileBase(IdMixin):
           Updated file metadata if successful, None otherwise.
         '''
         self._validate()
+
+        if self.filename is not None:
+            media_body = MediaFileUpload(
+                self.filename, mimetype=self.file_mime_type, resumable=True)
+
         body = {
             'title': self.title,
             'description': self.description,
             'mimeType': self.mime_type,
             'parents': self.parents,
-            'mimeType': self.mime_type
         }
 
         try:
-            updated_file = self.gdrive.service.files().update(
-                fileId=self._id, body=body, newRevision=True).execute()
+            params = {'body': body, 'fileId': self._id, 'newRevision': True}
+
+            if self.filename is not None:
+                params['media_body'] = media_body
+
+            updated_file = self.gdrive.service.files().update(**params).execute()
             return GFactory(self.gdrive, updated_file)
         except errors.HttpError, error:
             raise GError(error)
@@ -143,12 +174,14 @@ class GDoc(GFileBase):
 
 
 class GWorkSheet(IdMixin):
-    _file_id = None
+    # TODO: Delete the worksheet
+    # TODO: update_multiple_cells tests
+    _file = None
 
-    def __init__(self, gdrive, item):
+    def __init__(self, f, item):
         ''' Google Worksheet model '''
 
-        self.gdrive = gdrive
+        self._file = f
         self.title = item['title']
         self.col_count = item['col_count']
         self.row_count = item['row_count']
@@ -158,23 +191,110 @@ class GWorkSheet(IdMixin):
         return self._id == other.id
 
     def save(self):
+        ''' Attach to a file and upload to a Google Drive this worksheet
+            ----------------------------------------------------------
+
+        Required:
+            title, col_count, row_count.
+
+        Returns:
+            nothing!
+        TODO:
+            Update does not works
+        '''
+
+        for w in self._file.get_worksheets():
+
+            if w != self and w.title == self.title:
+                raise GError('The worksheet with given title is already exists.')
 
         if self._id is None:
-            body = '''<entry xmlns="http://www.w3.org/2005/Atom"
-                    xmlns:gs="http://schemas.google.com/spreadsheets/2006">
-                <title>%s</title>
-                <gs:rowCount>%d</gs:rowCount>
-                <gs:colCount>%d</gs:colCount>
-            </entry>''' % (self.title, self.row_count, self.col_count)
+            body = get_template('gdrive/insert_worksheet.xml').render(Context({'obj': self}))
             url = 'https://spreadsheets.google.com/feeds/worksheets/%s/private/full'
-            (resp, content) = self.gdrive.http.request(
-                url % self._file_id, 'POST', body=body,
+
+            (resp, content) = self._file.gdrive.http.request(
+                url % self._file._id, 'POST', body=body,
                 headers={'content-type': 'application/atom+xml'})
+
             root = ET.fromstring(content)
-            worksheet_id = root.find('{http://www.w3.org/2005/Atom}id').text.split('/')[-1]
-            return content
+            mutches = re.findall(r'xmlns\:?([^=]*?)=("(.+?)"|\'(.+?)\')', content, re.MULTILINE)
+            ns = {i[0]: i[2] or i[3] for i in mutches}
+            ns['default'] = ns['']
+            self._id = root.find('default:id', ns).text.split('/')[-1]
+
+            if self._id:
+                w_list = self._file.get_worksheets()
+                w_list += [self]
+            else:
+                raise GError('Worksheet attaching error.')
+
         else:
-            pass
+            body = get_template('gdrive/update_worksheet.xml').render(Context({'obj': self}))
+            url = 'https://spreadsheets.google.com/feeds/worksheets/%s/private/full/%s/version'
+
+            (resp, content) = self._file.gdrive.http.request(
+                url % (self._file._id, self._id), 'PUT', body=body,
+                headers={'content-type': 'application/atom+xml'})
+
+            return content
+
+    def retrieve_cells(self):
+        # TODO: make good
+
+        url = 'https://spreadsheets.google.com/feeds/cells/%s/%s/private/full'
+
+        (resp, content) = self._file.gdrive.http.request(
+            url % (self._file._id, self._id), 'GET')
+
+        return content
+
+    def update_multiple_cells(self, cells):
+        ''' Update batch of rows using R1C1 notation
+
+        Cells is a dicts, for example:
+            {'R1C1': 'title', 'R1C2': 'count', 'R2C1': 'apples', 'R2C2': 10}
+
+        TODO: tests
+        '''
+
+        if self._id is not None:
+            content = self.retrieve_cells()
+            ns = get_xml_ns(content)
+            ET.register_namespace('', ns['default'])
+            root = ET.fromstring(content)
+            edit_links = {}
+
+            for entry in root.findall('default:entry', ns):
+                cell_id = entry.find('default:id', ns).text.split('/')[-1]
+                edit_links[cell_id] = ET.tostring(entry.find('default:link[@rel=\'edit\']', ns))
+
+            body = get_template('gdrive/update_multiple_cells.xml').render(
+                Context({'obj': self, 'cells': cells, 'links': edit_links}))
+            url = 'https://spreadsheets.google.com/feeds/cells/%s/%s/private/full/batch'
+
+            (resp, content) = self._file.gdrive.http.request(
+                url % (self._file._id, self._id), 'POST', body=body,
+                headers={'content-type': 'application/atom+xml'})
+
+            # checking for errors
+            # ns = get_xml_ns(content)
+            # root = ET.fromstring(content)
+
+            # for entry in root.findall('atom:entry', ns):
+            #     title = entry.find('atom:title', ns).text
+
+            #     if title == 'Error':
+            #         cell_id = entry.find('atom:id', ns).text.split('/')[-1]
+            #         c = entry.find('atom:title', ns).text
+            #         raise GError()
+
+            return content
+
+    def get_id(self):
+        return self._id
+
+    def get_file_id(self):
+        return self._file._id
 
 
 class GSheet(GFileBase):
@@ -198,11 +318,8 @@ class GSheet(GFileBase):
         if self._id and self._worksheets is None:
             url = 'https://spreadsheets.google.com/feeds/worksheets/%s/private/full'
             (resp, content) = self.gdrive.http.request(url % self._id, 'GET')
-            self._raw_worksheets = content
             root = ET.fromstring(content)
-            mutches = re.findall(r'xmlns\:?([^=]*?)=("(.+?)"|\'(.+?)\')', content, re.MULTILINE)
-            ns = {i[0]: i[2] or i[3] for i in mutches}
-            ns['default'] = ns['']
+            ns = get_xml_ns(content)
             self._worksheets = []
 
             for entry in root.findall('default:entry', ns):
@@ -218,24 +335,10 @@ class GSheet(GFileBase):
                     'row_count': int(row_count),
                     'id': id,
                 }
-                w = GWorkSheet(self.gdrive, item)
+                w = GWorkSheet(self, item)
                 self._worksheets += [w]
 
         return self._worksheets
-
-    def get_raw_worksheets(self):
-        return self._raw_worksheets
-
-    def add_worksheet(self, w):
-        ''' Attach to an object and upload to a Google Drive worksheet
-            ----------------------------------------------------------
-
-        Make an instance of GWorkSheet and set title, col_count, row_count at least.
-        Then you can use this method.
-        '''
-
-        w._file_id = self._id
-        return w.save()
 
 
 class GFolder(GFileBase):
@@ -287,7 +390,8 @@ class GFactory(object):
         except errors.HttpError, error:
             raise GError(error)
 
-    def get(self, gdrive, id):
+    @classmethod
+    def get(cls, gdrive, id):
         ''' Get a file from Google Drive
             ----------------------------
 

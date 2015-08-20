@@ -1,0 +1,21 @@
+{% load gdrive_cell %}
+
+<feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:batch="http://schemas.google.com/gdata/batch"
+    xmlns:gs="http://schemas.google.com/spreadsheets/2006">
+
+    <id>https://spreadsheets.google.com/feeds/cells/{{ obj.get_file_id }}/{{ obj.get_id }}/private/full</id>
+
+    {% for key, value in cells.items %}
+
+        <entry>
+            <batch:id>A{{ forloop.counter }}</batch:id>
+            <batch:operation type="update"/>
+            <id>https://spreadsheets.google.com/feeds/cells/{{ obj.get_file_id }}/{{ obj.get_id }}/private/full/{{ key }}</id>
+                {{ links|get_item:key }}
+            <gs:cell row="{{ key|row }}" col="{{ key|col }}" inputValue="{{ value }}"/>
+        </entry>
+
+    {% endfor %}
+
+</feed>

@@ -1,0 +1,8 @@
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:gs="http://schemas.google.com/spreadsheets/2006">
+    <id>
+        https://spreadsheets.google.com/feeds/worksheets/{{ obj._file._id }}/private/full/{{ obj._id }}
+    </id>
+    <title>{{ obj.title }}</title>
+    <gs:rowCount>{{ obj.row_count }}</gs:rowCount>
+    <gs:colCount>{{ obj.col_count }}</gs:colCount>
+</entry>
