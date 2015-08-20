@@ -120,10 +120,11 @@ class GFileBase(IdMixin):
                 self.filename, mimetype=self.file_mime_type, resumable=True)
 
         body = {
-            'title': self.title,
+            'convert': self.convert,
             'description': self.description,
             'mimeType': self.mime_type,
             'parents': self.parents,
+            'title': self.title,
         }
 
         try:
@@ -151,10 +152,11 @@ class GFileBase(IdMixin):
                 self.filename, mimetype=self.file_mime_type, resumable=True)
 
         body = {
-            'title': self.title,
+            'convert': self.convert,
             'description': self.description,
             'mimeType': self.mime_type,
             'parents': self.parents,
+            'title': self.title,
         }
 
         try:
