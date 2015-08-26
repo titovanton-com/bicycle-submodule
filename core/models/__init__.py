@@ -251,9 +251,6 @@ class CoverModel(CoverMixin, ImgSeoModel):
 class CoverBlankModel(CoverMixin, ImgSeoModel):
     cover = ImageField(blank=True, upload_to=UploadToDir('cover'), verbose_name=_(u'Cover'))
 
-    # def save(self, *args, **kwargs):
-    #     assert False
-
     class Meta:
         abstract = True
 
