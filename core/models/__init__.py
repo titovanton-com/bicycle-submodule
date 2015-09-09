@@ -324,23 +324,6 @@ class OrderedQuerySetMixin(object):
         return self.__order(super(OrderedQuerySetMixin, self).all(**kwargs))
 
 
-class PublishedQuerySet(PublishedQuerySet):
-
-    def published(self, **kwargs):
-        kwargs['published'] = True
-        return self.filter(**kwargs)
-
-    def unpublished(self, **kwargs):
-        kwargs['published'] = False
-        return self.filter(**kwargs)
-
-
-class PublishedManager(PublishedManager):
-
-    def get_queryset(self):
-        return PublishedQuerySet(self.model, using=self._db)
-
-
 class ChronologyModel(models.Model):
     created = models.DateTimeField(verbose_name=_(u'Created'))
     updated = models.DateTimeField(verbose_name=_(u'Updated'))
