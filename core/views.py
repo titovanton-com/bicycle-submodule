@@ -13,6 +13,8 @@ from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.base import RedirectView
 
+from models import DeferManager
+from models import OnlyManager
 from shortcuts import get_page
 
 
@@ -130,7 +132,13 @@ class FilterMixin:
     def get_queryset(self):
 
         if self.queryset is None and getattr(self, 'model', False):
-            return self.model.objects.all()
+
+            if isinstance(self.model.objects, DeferManager):
+                return self.model.objects.defer_all()
+            elif isinstance(self.model.objects, OnlyManager):
+                return self.model.objects.only_all()
+            else:
+                return self.model.objects.all()
 
         return self.queryset
 

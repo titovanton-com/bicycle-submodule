@@ -586,3 +586,47 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
         ordering = ['position', '-pk']
         verbose_name_plural = _(u'Images')
         abstract = True
+
+
+class OnlyQuerySet(models.query.QuerySet):
+
+    def only_filter(self, **kwargs):
+        return self.filter(**kwargs).only(*self.model.object_list_only)
+
+    def only_all(self, **kwargs):
+        return self.all(**kwargs).only(*self.model.object_list_only)
+
+
+class OnlyManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return OnlyQuerySet(self.model, using=self._db)
+
+    def only_filter(self, **kwargs):
+        return self.get_queryset().only_filter(**kwargs)
+
+    def only_all(self, **kwargs):
+        return self.get_queryset().only_all(**kwargs)
+
+
+class DeferQuerySet(models.query.QuerySet):
+
+    def defer_filter(self, **kwargs):
+        return self.filter(**kwargs).defer(*self.model.object_list_deffer)
+
+    def defer_all(self, **kwargs):
+        return self.all(**kwargs).defer(*self.model.object_list_deffer)
+
+
+class DeferManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return DeferQuerySet(self.model, using=self._db)
+
+    def defer_filter(self, **kwargs):
+        return self.get_queryset().defer_filter(**kwargs)
+
+    def defer_all(self, **kwargs):
+        return self.get_queryset().defer_all(**kwargs)
