@@ -588,45 +588,35 @@ class ImageMedia(ParseMediaCacheMixin, ImageBase):
         abstract = True
 
 
-class OnlyQuerySet(models.query.QuerySet):
-
-    def only_filter(self, **kwargs):
-        return self.filter(**kwargs).only(*self.model.object_list_only)
-
-    def only_all(self, **kwargs):
-        return self.all(**kwargs).only(*self.model.object_list_only)
-
-
 class OnlyManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
-        return OnlyQuerySet(self.model, using=self._db)
-
-    def only_filter(self, **kwargs):
-        return self.get_queryset().only_filter(**kwargs)
-
-    def only_all(self, **kwargs):
-        return self.get_queryset().only_all(**kwargs)
-
-
-class DeferQuerySet(models.query.QuerySet):
-
-    def defer_filter(self, **kwargs):
-        return self.filter(**kwargs).defer(*self.model.object_list_deffer)
-
-    def defer_all(self, **kwargs):
-        return self.all(**kwargs).defer(*self.model.object_list_deffer)
+        return super(OnlyManager, self).get_queryset().only(*self.model.only_fields)
 
 
 class DeferManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
-        return DeferQuerySet(self.model, using=self._db)
+        return super(DeferManager, self).get_queryset().defer(*self.model.defer_fields)
 
-    def defer_filter(self, **kwargs):
-        return self.get_queryset().defer_filter(**kwargs)
 
-    def defer_all(self, **kwargs):
-        return self.get_queryset().defer_all(**kwargs)
+class OnlyManagerModel(models.Model):
+
+    ''' All fields will be defered except in only_fields which is tuple or list '''
+    objects = OnlyManager()
+    only_fields = []
+
+    class Meta:
+        abstract = True
+
+
+class DeferManagerModel(models.Model):
+
+    ''' All fields from only_fields which is tuple or list will be defered '''
+    objects = DeferManager()
+    defer_fields = []
+
+    class Meta:
+        abstract = True
