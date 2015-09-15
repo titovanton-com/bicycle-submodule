@@ -24,7 +24,7 @@ from sorl.thumbnail import get_thumbnail
 from bicycle.core.utilites import UploadToDir
 from bicycle.core.utilites import valid_slug
 
-from fields import ExifLessImageField as ImageField
+from .fields import ExifLessImageField as ImageField
 
 
 DB_MAX_INT = 2147483647
