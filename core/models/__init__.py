@@ -371,7 +371,7 @@ class PositionModel(models.Model):
 class SeoModel(models.Model):
     html_title = models.CharField(max_length=256, blank=True,
                                   verbose_name=_(u'Tab title'))
-    html_keywords = models.CharField(max_length=256, blank=True,
+    html_keywords = models.TextField(blank=True,
                                      verbose_name=_(u'Keywords for search systems'))
     html_description = models.TextField(blank=True,
                                         verbose_name=_(u'Description for search systems'))
