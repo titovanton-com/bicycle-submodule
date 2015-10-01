@@ -26,9 +26,6 @@ class SitemapView(TemplateView):
         context['object_list'] = [model for model in apps.get_models()
                                   if issubclass(model, SiteMapModel)]
 
-        if self.request.META['SERVER_PORT'] == '443':
-            context['SERVER_PROTOCOL'] = 'https'
-        else:
-            context['SERVER_PROTOCOL'] = 'http'
+        context['URL'] = settings.URL
 
         return context

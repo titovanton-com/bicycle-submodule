@@ -6,21 +6,25 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>{{ SERVER_PROTOCOL }}://{{ request.META.HTTP_HOST }}/</loc>
+        <loc>{{ URL }}</loc>
         <priority>0.9</priority>
     </url>
 
     {% block extra %}{% endblock extra %}
 
     {% block content %}
+
         {% for model in object_list %}
+
             {% for obj in model.get_sitemap_queryset %}
                 <url>
-                    <loc>{{ SERVER_PROTOCOL }}://{{ request.META.HTTP_HOST }}{{ obj.get_url }}</loc>
+                    <loc>{{ obj.get_absolute_url }}</loc>
                     <priority>{{ obj.get_priority }}</priority>
                 </url>
             {% endfor %}
+
         {% endfor %}
+
     {% endblock content %}
 
 </urlset>

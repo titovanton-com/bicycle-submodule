@@ -116,7 +116,7 @@ class GetUrlMixin(ClassNameMixin):
         return u'/%s/%s/pk/%s/' % (self.app_label(), self.class_name().lower(), self.pk)
 
     def get_absolute_url(self):
-        return self.get_url()
+        return settings.URL + self.get_url()
 
 
 class EditLinkMixin(ClassNameMixin):
