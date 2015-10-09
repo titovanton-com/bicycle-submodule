@@ -2,7 +2,6 @@
 
 from django.apps import apps
 from django.conf import settings
-from django.db.models.loading import get_model
 from django.views.generic import TemplateView
 
 from models import SiteMapModel
