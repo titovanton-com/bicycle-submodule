@@ -16,9 +16,12 @@ class SitemapView(TemplateView):
 
         return self.template_name
 
-    def get_queryset(self, model):
+    # def get_queryset(self, model):
 
-        return model.objects.all()
+    #     try:
+    #         return model.sitemap_queryset()
+    #     except AttributeError:
+    #         return model.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super(SitemapView, self).get_context_data(**kwargs)
