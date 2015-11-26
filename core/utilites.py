@@ -163,3 +163,23 @@ def random_datetime(start, end=None):
         return tz.localize(random_date)
     except ValueError:
         return random_date
+
+
+def download_file(url, save_to):
+    import os
+    import requests
+
+    local_filename = os.path.join(save_to, url.split('/')[-1])
+
+    # NOTE the stream=True parameter
+    r = requests.get(url, stream=True)
+
+    with open(local_filename, 'wb') as f:
+
+        for chunk in r.iter_content(chunk_size=1024):
+
+            # filter out keep-alive new chunks
+            if chunk:
+                f.write(chunk)
+
+    return local_filename
