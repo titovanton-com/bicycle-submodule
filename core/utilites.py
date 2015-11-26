@@ -165,7 +165,7 @@ def random_datetime(start, end=None):
         return random_date
 
 
-def download_file(url, save_to):
+def download_file(url, save_to=''):
     import os
     import requests
 
