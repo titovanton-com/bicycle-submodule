@@ -169,7 +169,8 @@ def download_file(url, save_to=''):
     import os
     import requests
 
-    local_filename = os.path.join(save_to, url.split('/')[-1])
+    file_name = url.split('/')[-1]
+    local_filename = os.path.join(save_to, file_name)
 
     # NOTE the stream=True parameter
     r = requests.get(url, stream=True)
@@ -182,4 +183,4 @@ def download_file(url, save_to=''):
             if chunk:
                 f.write(chunk)
 
-    return local_filename
+    return file_name, local_filename
