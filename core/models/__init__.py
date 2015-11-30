@@ -142,7 +142,7 @@ class TitleModel(ClassNameMixin, models.Model):
     title = models.CharField(max_length=256, verbose_name=_(u'Title'))
 
     def __unicode__(self):
-        return u'%s: %s' % (self.class_name(), self.title)
+        return u'%s' % self.title
 
     class Meta:
         abstract = True
@@ -153,9 +153,9 @@ class UnicodeSlugMixin(ClassNameMixin):
     def __unicode__(self):
 
         if self.slug:
-            return u'%s: %s' % (self.class_name(), self.slug)
+            return u'%s' % self.slug
         else:
-            return u'%s: %s' % (self.class_name(), self.pk)
+            return u'%s with pk: %s' % (self.class_name(), self.pk)
 
 
 class SlugModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
