@@ -6,6 +6,17 @@ import os
 import random
 import re
 
+try:
+    import requests
+except ImportError:
+    pass
+
+try:
+    import pytz
+    import dateutil.parser
+except ImportError:
+    pass
+
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
 from django.utils.timezone import now
@@ -143,8 +154,6 @@ def random_datetime(start, end=None):
     - If end is None then now is used
     - Required: pytz, dateutil
     """
-    import pytz
-    import dateutil.parser
 
     tz = pytz.timezone(settings.TIME_ZONE)
     sdt = dateutil.parser.parse(start)
@@ -166,9 +175,6 @@ def random_datetime(start, end=None):
 
 
 def download_file(url, save_to=''):
-    import os
-    import requests
-
     file_name = url.split('/')[-1]
     local_filename = os.path.join(save_to, file_name)
 

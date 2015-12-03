@@ -2,6 +2,11 @@
 
 import datetime
 
+try:
+    import pytz
+except ImportError:
+    pass
+
 from django.conf import settings
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
@@ -67,7 +72,6 @@ def session_start(request):
 
 
 def tz_now(format=None):
-    import pytz
 
     if format is not None:
         return datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)).strftime(format)
@@ -76,14 +80,10 @@ def tz_now(format=None):
 
 
 def tz_iso_now():
-    import pytz
-
     return datetime.datetime.now(pytz.timezone(settings.TIME_ZONE)).isoformat()
 
 
 def localize_date(d):
-    import pytz
-
     try:
         return pytz.timezone(settings.TIME_ZONE).localize(d)
     except ValueError:  # already localized
