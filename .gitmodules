@@ -1,3 +1,6 @@
 [submodule "search2"]
 	path = search2
 	url = git@github.com:titovanton/bicycle-search.git
+[submodule "native_admin"]
+	path = native_admin
+	url = git@github.com:titovanton/django-native-admin-board.git

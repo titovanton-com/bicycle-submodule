@@ -12,8 +12,8 @@ except ImportError:
     pass
 
 try:
-    import pytz
     import dateutil.parser
+    import pytz
 except ImportError:
     pass
 
