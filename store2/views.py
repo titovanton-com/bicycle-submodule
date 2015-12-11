@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.core.exceptions import ObjectDoesNotExist
-from bicycle.core.shortcuts import session_start
+from bicycle.core.tools import session_start
 from bicycle.core.views import JsonResponseMixin
 from bicycle.core.views import ResponseMixin
 from bicycle.core.views import ToDoView

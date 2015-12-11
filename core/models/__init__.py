@@ -21,8 +21,8 @@ from django.utils.translation import ugettext as _
 
 from sorl.thumbnail import get_thumbnail
 
-from bicycle.core.utilites import UploadToDir
-from bicycle.core.utilites import valid_slug
+from bicycle.core.tools import UploadToDir
+from bicycle.core.tools import valid_slug
 
 from .fields import ExifLessImageField as ImageField
 

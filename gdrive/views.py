@@ -12,7 +12,7 @@ from oauth2client import client
 from oauth2client.client import OAuth2Credentials
 from oauth2client.client import FlowExchangeError
 
-from bicycle.core.shortcuts import localize_date
+from bicycle.core.tools import localize_date
 from bicycle.core.views import JsonResponseMixin
 from bicycle.core.views import ResponseMixin
 

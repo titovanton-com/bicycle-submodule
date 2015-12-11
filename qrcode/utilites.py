@@ -2,7 +2,7 @@
 
 import os
 
-from bicycle.core.utilites import valid_file_name
+from bicycle.core.tools import valid_file_name
 
 
 def upload_qr_code(instance, filename):
