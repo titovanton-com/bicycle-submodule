@@ -1,6 +1,0 @@
-15,35,55 * * * * ~/bin/redis-server
-
-to kill redis run it before:
-ps -u $USER -F | grep redis
-second number is pid, copy it and run:
-kill <pid>
