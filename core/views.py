@@ -152,8 +152,6 @@ class FilterMixin:
 class PageFilterMixin(FilterMixin):
     paginate = True
     allow_empty = True
-    # wtf?
-    context_object_name = None
     page_kwarg = 'page'
     page_size_kwarg = 'page-size'
     default_page_size = '6x4'
