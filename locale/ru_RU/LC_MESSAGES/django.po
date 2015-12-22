@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-07 19:35+0300\n"
+"POT-Creation-Date: 2015-12-22 05:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,76 +35,80 @@ msgstr "Опубликовать"
 msgid "Unpublish"
 msgstr "Убрать флаг публикации"
 
-#: bicycle/core/models/__init__.py:142
+#: bicycle/core/models/__init__.py:133
 msgid "Title"
 msgstr "Название"
 
-#: bicycle/core/models/__init__.py:163 bicycle/core/models/__init__.py:175
-#: bicycle/core/models/__init__.py:560
+#: bicycle/core/models/__init__.py:154 bicycle/core/models/__init__.py:178
+#: bicycle/core/models/__init__.py:563
 msgid "Short slug for URL"
 msgstr "Краткое названия для URL"
 
-#: bicycle/core/models/__init__.py:192
+#: bicycle/core/models/__init__.py:166
+msgid "Short unique label/slug"
+msgstr "Краткое уникальное название"
+
+#: bicycle/core/models/__init__.py:195
 msgid "Attribute title of the tag <img/>"
 msgstr "Атрибут title тэга <img/>"
 
-#: bicycle/core/models/__init__.py:194
+#: bicycle/core/models/__init__.py:197
 msgid "Attribute alt of the tag <img/>"
 msgstr "Атрибут alt тэга <img/>"
 
-#: bicycle/core/models/__init__.py:245 bicycle/core/models/__init__.py:252
+#: bicycle/core/models/__init__.py:248 bicycle/core/models/__init__.py:255
 msgid "Cover"
 msgstr "Обложка"
 
-#: bicycle/core/models/__init__.py:328
+#: bicycle/core/models/__init__.py:331
 msgid "Created"
 msgstr "Создан"
 
-#: bicycle/core/models/__init__.py:329
+#: bicycle/core/models/__init__.py:332
 msgid "Updated"
 msgstr "Обновлен"
 
-#: bicycle/core/models/__init__.py:355
+#: bicycle/core/models/__init__.py:358
 msgid "Flag as published"
 msgstr "Опубликован"
 
-#: bicycle/core/models/__init__.py:364
+#: bicycle/core/models/__init__.py:367
 msgid "Order in a list"
 msgstr "Порядок в списке"
 
-#: bicycle/core/models/__init__.py:373
+#: bicycle/core/models/__init__.py:376
 msgid "Tab title"
 msgstr "Название вкладки"
 
-#: bicycle/core/models/__init__.py:375
+#: bicycle/core/models/__init__.py:378
 msgid "Keywords for search systems"
 msgstr "Ключевые слова для поисковиков"
 
-#: bicycle/core/models/__init__.py:377
+#: bicycle/core/models/__init__.py:380
 msgid "Description for search systems"
 msgstr "Описание для поисковиков"
 
-#: bicycle/core/models/__init__.py:384
+#: bicycle/core/models/__init__.py:387
 msgid "Image"
 msgstr "Изображение"
 
-#: bicycle/core/models/__init__.py:404
+#: bicycle/core/models/__init__.py:407
 msgid "No image"
 msgstr "Изображения нет"
 
-#: bicycle/core/models/__init__.py:411 bicycle/core/models/__init__.py:587
+#: bicycle/core/models/__init__.py:414 bicycle/core/models/__init__.py:590
 msgid "Images"
 msgstr "Изображения"
 
-#: bicycle/core/models/__init__.py:417
+#: bicycle/core/models/__init__.py:420
 msgid "Parent"
 msgstr "Предок"
 
-#: bicycle/core/models/__init__.py:433
+#: bicycle/core/models/__init__.py:436
 msgid "Categories"
 msgstr "Категории"
 
-#: bicycle/core/models/__init__.py:438
+#: bicycle/core/models/__init__.py:441
 msgid "Value"
 msgstr "Значение"
 

@@ -106,15 +106,6 @@ class GetUrlMixin(ClassNameMixin):
     def get_url(self):
         return u'/%s/%s/' % (self.class_name().lower(), self.slug)
 
-    def get_url_with_app(self):
-        return u'/%s/%s/%s/' % (self.app_label(), self.class_name().lower(), self.slug)
-
-    def get_url_by_pk(self):
-        return u'/%s/pk/%s/' % (self.class_name().lower(), self.pk)
-
-    def get_url_with_app_by_pk(self):
-        return u'/%s/%s/pk/%s/' % (self.app_label(), self.class_name().lower(), self.pk)
-
     def get_absolute_url(self):
         return settings.URL + self.get_url()
 
@@ -165,6 +156,18 @@ class SlugModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, TitleModel):
     def save(self, *args, **kwargs):
         self.slug = valid_slug(self.slug)
         super(SlugModel, self).save()
+
+    class Meta:
+        abstract = True
+
+
+class OnlySlugModel(GetUrlMixin, EditLinkMixin, UnicodeSlugMixin, models.Model):
+    slug = models.SlugField(max_length=256, unique=True,
+                            verbose_name=_(u'Short unique label/slug'))
+
+    def save(self, *args, **kwargs):
+        self.slug = valid_slug(self.slug)
+        super(OnlySlugModel, self).save()
 
     class Meta:
         abstract = True

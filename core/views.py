@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 
 from models import DeferManager
 from models import OnlyManager
-from shortcuts import get_page
+from tools import get_page
 
 
 class ToDoMixin(object):
