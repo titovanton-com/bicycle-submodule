@@ -23,6 +23,7 @@ class CartMixin:
         raise NotImplementedError()
 
     def post_add(self, request, *args, **kwargs):
+        # Do not forget to save a cart if not cart.pk
         raise NotImplementedError()
 
     def post_change(self, request, *args, **kwargs):
@@ -35,9 +36,11 @@ class CartMixin:
         raise NotImplementedError()
 
     def post_make_an_order(self, request, todo):
+        # Do not forget delete a cart from CartModel
         raise NotImplementedError()
 
     def post_one_click_buy(self, request, *args, **kwargs):
+        # Do not forget delete a cart from CartModel
         raise NotImplementedError()
 
 
@@ -60,21 +63,19 @@ class CartViewBase(CartMixin, ResponseMixin, JsonResponseMixin, ToDoView):
     cart = None
 
     def _get_cart(self, request, *args, **kwargs):
+
         if self.cart is not None:
             return self.cart
+
         elif self.model is not None:
             try:
                 self.cart = self.model.objects.get(session_key=session_start(request))
             except ObjectDoesNotExist:
                 self.cart = self.model(session_key=session_start(request))
-                try:
-                    self.cart.full_clean()
-                except ValidationError:
-                    raise CartError('self.cart.full_clean() exception')
-                self.cart.save()
             return self.cart
+
         else:
-            raise CartError('model was not specified')
+            raise CartError('model was not specify')
 
     def _cart_has_the_item(self, request, item):
         cart = self._get_cart(request)

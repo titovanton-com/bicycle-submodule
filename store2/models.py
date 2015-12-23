@@ -52,7 +52,7 @@ class CartItemMixin(object):
 
 
 class CartModelBase(CartMixin, models.Model):
-    session_key = models.CharField(max_length=40, blank=True, null=True)
+    session_key = models.CharField(max_length=40, unique=True, blank=True, null=True)
 
     class Meta:
         abstract = True
