@@ -117,7 +117,7 @@ def pagerbuttons(parser, token):
                         {% elif b == '>' %}
                             <a href="?stranitsa={{ page.next_page_number }}">{{ b }}</a>
                         {% elif b == page.number %}
-                            <span cluss="current-page">{{ b }}</span>
+                            <span class="current-page">{{ b }}</span>
                         {% else %}
                             <a href="?stranitsa={{ b }}">{{ b }}</a>
                         {% endif %}
