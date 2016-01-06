@@ -28,23 +28,25 @@ class ToDoMixin(object):
         if request.method.lower() in self.http_method_names:
             todo = kwargs.pop('todo', '').replace('-', '_')
 
-            if todo:
-                method = '%s_%s' % (request.method.lower(), todo)
-                self.todo = todo
-            elif self.todo is not None:
-                method = '%s_%s' % (request.method.lower(), self.todo)
-            else:
-                method = request.method.lower()
+            if todo not in ['queryset', 'page']:
 
-            if self.handler_prefix is not None:
-                method = '%s_%s' % (self.handler_prefix, method)
-            elif self.handler_suffix is not None:
-                method = '%s_%s' % (method, self.handler_suffix)
+                if todo:
+                    method = '%s_%s' % (request.method.lower(), todo)
+                    self.todo = todo
+                elif self.todo is not None:
+                    method = '%s_%s' % (request.method.lower(), self.todo)
+                else:
+                    method = request.method.lower()
 
-            handler = getattr(self, method, self.http_method_not_allowed)
-        else:
-            handler = self.http_method_not_allowed
+                if self.handler_prefix is not None:
+                    method = '%s_%s' % (self.handler_prefix, method)
+                elif self.handler_suffix is not None:
+                    method = '%s_%s' % (method, self.handler_suffix)
 
+                handler = getattr(self, method, self.http_method_not_allowed)
+                return handler(request, *args, **kwargs)
+
+        handler = self.http_method_not_allowed
         return handler(request, *args, **kwargs)
 
 
@@ -199,3 +201,100 @@ class PageFilterMixin(FilterMixin):
 
 class Redirect301View(RedirectView):
     permanent = True
+
+
+class FilterQuerysetMixin(object):
+    '''Must be last in the bases list of mixins with overloaded get_queryset method'''
+
+    model = None
+
+    def get_queryset(self):
+
+        if getattr(self, 'model', False):
+
+            if isinstance(self.model.objects, DeferManager):
+                return self.model.objects.defer_all()
+            elif isinstance(self.model.objects, OnlyManager):
+                return self.model.objects.only_all()
+            else:
+                return self.model.objects.all()
+
+        else:
+            raise FilterQuerysetError('self.model does not specified')
+
+    class FilterQuerysetError(Exception):
+        pass
+
+
+class QuerysetByPageMixin(object):
+    '''Must be first in the bases list of mixins with overloaded get_queryset method'''
+
+    paginate = True
+    allow_empty = True
+    page_kwarg = 'page'
+    page_size_kwarg = 'page-size'
+    rows_columns = '6x4'
+    prefetch_related = []
+
+    def get_queryset(self):
+        '''Returns object_list of specified page_num'''
+
+        queryset = super(QuerysetByPageMixin, self).get_queryset()
+
+        if self.paginate:
+
+            # page_num
+            try:
+                page_num = int(self.request.GET.get(self.page_kwarg, 1))
+            except ValueError:
+                if self.allow_empty:
+                    page_num = 1
+                else:
+                    raise Http404
+
+            # rows, columns
+            try:
+                size = self.request.GET.get(self.page_size_kwarg, self.default_page_size)
+                rows, columns = [int(i) for i in size.split('x')]
+            except ValueError:
+                if self.allow_empty:
+                    rows, columns = [int(i) for i in self.default_page_size.split('x')]
+                else:
+                    raise Http404
+
+            pager = Paginator(queryset, rows * columns)
+
+            # page
+            try:
+                page = pager.page(page_num)
+            except EmptyPage:
+                if self.allow_empty:
+                    page = pager.page(pager.num_pages)
+                else:
+                    raise Http404
+
+            self.page = page
+            self.rows = rows
+            self.columns = columns
+            self.page_num = page_num
+            return page.object_list
+
+    def get_context_data(self, **kwargs):
+        '''Use object_list instead page.object_list in template
+        if you want to prefetch_related,
+        else - does not metter'''
+
+        object_list = self.get_queryset()
+
+        if self.prefetch_related:
+            object_list = object_list.prefetch_related(*self.prefetch_related)
+
+        context = {
+            'object_list': object_list,
+            'page': self.page,
+            'rows': self.rows,
+            'columns': self.columns,
+            'page_num': self.page_num,
+        }
+        context.update(kwargs)
+        return context
