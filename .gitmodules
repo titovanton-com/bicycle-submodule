@@ -4,3 +4,6 @@
 [submodule "native_admin"]
 	path = native_admin
 	url = git@github.com:titovanton/django-native-admin-board.git
+[submodule "core"]
+	path = core
+	url = git@github.com:titovanton/bicycle-core.git
