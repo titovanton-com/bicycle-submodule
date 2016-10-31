@@ -7,3 +7,6 @@
 [submodule "core"]
 	path = core
 	url = git@github.com:titovanton/bicycle-core.git
+[submodule "glue"]
+	path = glue
+	url = git@github.com:titovanton/bicycle-glue.git
